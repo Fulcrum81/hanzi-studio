@@ -1,5 +1,5 @@
 /* ============================================================
-   Hanzi Studio — Main Application Logic
+   Practice Hanzi — Main Application Logic
    Supports single characters AND multi-character words:
    - Word search (Chinese, English, or pinyin)
    - Info card: pinyin + definition per character

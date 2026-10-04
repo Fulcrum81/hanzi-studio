@@ -1,8 +1,8 @@
-# Hanzi Studio — Chinese Character Learning PWA
+# Practice Hanzi — Chinese Character Learning PWA
 
 A cross-platform Progressive Web App for studying Chinese characters (hànzì). Search any character, watch its stroke order animation, see pinyin + meaning, then practice writing it on screen with real-time stroke-order grading.
 
-![Hanzi Studio](icons/icon-192.png)
+![Practice Hanzi](icons/icon-192.png)
 
 ## Features
 

@@ -7,7 +7,7 @@
   <meta name="description" content="Learn Chinese characters – stroke order animation, pinyin, definitions, and handwriting practice.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <title>Hanzi Studio</title>
+  <title>Practice Hanzi</title>
 
   <!-- Hanzi Writer from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
@@ -26,7 +26,7 @@
   <header class="top-bar">
     <div class="app-title">
       <span class="logo-char">字</span>
-      <span class="logo-text">Hanzi Studio</span>
+      <span class="logo-text">Practice Hanzi</span>
     </div>
     <div class="header-controls">
       <div class="lang-selector">
@@ -136,7 +136,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('./sw.js').then(function (reg) {
-          console.log('Hanzi Studio SW registered:', reg.scope);
+          console.log('Practice Hanzi SW registered:', reg.scope);
         }).catch(function (err) {
           console.warn('SW registration failed:', err);
         });

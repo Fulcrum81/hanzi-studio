@@ -1,5 +1,5 @@
 /**
- * Hanzi Studio — Internationalization
+ * Practice Hanzi — Internationalization
  * UI strings + Russian dictionary translations.
  */
 

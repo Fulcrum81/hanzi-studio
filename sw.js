@@ -1,9 +1,9 @@
 /* ============================================================
-   Hanzi Studio — Service Worker
+   Practice Hanzi — Service Worker
    Simple cache-first PWA with offline support.
    ============================================================ */
 
-const CACHE_NAME = 'hanzi-studio-v1';
+const CACHE_NAME = 'practice-hanzi-v1';
 const CORE_ASSETS = [
   './',
   './index.html',

@@ -1,5 +1,5 @@
 /*
- * Hanzi Studio – embedded dictionary
+ * Practice Hanzi – embedded dictionary
  * Pinyin + English definitions for common Simplified Chinese characters.
  * This is a starter dataset (~260 chars, the most common HSK-1/2 level ones).
  * Extend HANZI_DICT freely — each entry:  char -> [pinyin (tone marks), definition]
