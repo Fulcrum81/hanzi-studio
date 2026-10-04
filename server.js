@@ -1,4 +1,4 @@
-// Static HTTPS server for PWA testing. Uses openssl for a proper certificate.
+﻿// Static HTTPS server for PWA testing. Uses openssl for a proper certificate.
 // Phone access: https://<your-pc-ip>:8443
 
 const https = require('https');

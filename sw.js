@@ -1,5 +1,5 @@
 /* ============================================================
-   Practice Hanzi вЂ” Service Worker
+   Practice Hanzi — Service Worker
    Simple cache-first PWA with offline support.
    ============================================================ */
 

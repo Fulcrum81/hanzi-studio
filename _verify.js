@@ -1,0 +1,11 @@
+const fs = require('fs');
+const fp = 'C:\\Users\\vadim\\OneDrive\\Documents\\deepseek-harness\\default-workspace\\chinese-writer\\index.html';
+const c = fs.readFileSync(fp, 'utf8');
+const m = c.match(/<meta name="description" content="([^"]+)"/);
+if (m) console.log('description:', JSON.stringify(m[1]));
+const t = c.match(/<title>([^<]+)<\/title>/);
+if (t) console.log('title:', JSON.stringify(t[1]));
+const logo = c.match(/logo-text[^>]*>([^<]+)<\/span>/);
+if (logo) console.log('logo-text:', JSON.stringify(logo[1]));
+const dash = c.match(/description.*content="[^"]*\u2014/);
+console.log('em dash present:', !!dash);
