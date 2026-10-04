@@ -37,5 +37,5 @@ http.createServer((req, res) => {
     .filter((i) => i.family === 'IPv4' && !i.internal)
     .sort((a) => a.address.startsWith('192.168.') ? -1 : 1)
     .map((i) => i.address)[0] || '127.0.0.1';
-  console.log(`\n  Hanzi Studio HTTP server ready\n  http://${ip}:${PORT}\n`);
+  console.log(`\n  Practice Hanzi HTTP server ready\n  http://${ip}:${PORT}\n`);
 });

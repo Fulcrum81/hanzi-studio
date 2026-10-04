@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1a1a2e">
-  <meta name="description" content="Learn Chinese characters – stroke order animation, pinyin, definitions, and handwriting practice.">
+  <meta name="description" content="Learn Chinese characters вЂ“ stroke order animation, pinyin, definitions, and handwriting practice.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <title>Hanzi Studio</title>
+  <title>Practice Hanzi</title>
 
   <!-- Hanzi Writer from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
@@ -25,15 +25,15 @@
   <!-- ===== Top Bar ===== -->
   <header class="top-bar">
     <div class="app-title">
-      <span class="logo-char">字</span>
-      <span class="logo-text">Hanzi Studio</span>
+      <span class="logo-char">е­—</span>
+      <span class="logo-text">Practice Hanzi</span>
     </div>
     <div class="header-controls">
       <div class="lang-selector">
         <button class="lang-btn active" data-lang="en" data-i18n-title="lang.switch" title="Language">EN</button>
         <button class="lang-btn" data-lang="ru" data-i18n-title="lang.switch" title="Language">RU</button>
       </div>
-      <button id="themeToggle" class="icon-btn" data-i18n-title="search.random" title="Toggle theme">🌙</button>
+      <button id="themeToggle" class="icon-btn" data-i18n-title="search.random" title="Toggle theme">рџЊ™</button>
     </div>
   </header>
 
@@ -41,11 +41,11 @@
   <section class="search-section">
     <div class="search-box">
       <div class="search-wrapper">
-        <input type="text" id="charInput" data-i18n-placeholder="search.placeholder" placeholder="Type a Chinese character, English word, or pinyin…" maxlength="20" autofocus>
+        <input type="text" id="charInput" data-i18n-placeholder="search.placeholder" placeholder="Type a Chinese character, English word, or pinyinвЂ¦" maxlength="20" autofocus>
         <div class="autocomplete-list" id="autocompleteList"></div>
       </div>
       <button id="searchBtn" class="primary-btn" data-i18n="search.btn">Search</button>
-      <button id="randomBtn" class="icon-btn" data-i18n-title="search.random" title="Random character">🎲</button>
+      <button id="randomBtn" class="icon-btn" data-i18n-title="search.random" title="Random character">рџЋІ</button>
     </div>
   </section>
 
@@ -54,7 +54,7 @@
 
     <!-- Splash / welcome -->
     <div class="splash" id="splash">
-      <div class="splash-char">字</div>
+      <div class="splash-char">е­—</div>
       <p class="splash-sub" data-i18n="splash.text">Search any Chinese character to see its stroke order, pinyin, and meaning.<br>Then practice writing it yourself!</p>
     </div>
 
@@ -73,8 +73,8 @@
 
       <!-- Tab bar -->
       <div class="tab-bar">
-        <button class="tab-btn active" data-tab="animate" data-i18n="tab.animate">▶ Stroke Order</button>
-        <button class="tab-btn" data-tab="practice" data-i18n="tab.practice">✍ Practice</button>
+        <button class="tab-btn active" data-tab="animate" data-i18n="tab.animate">в–¶ Stroke Order</button>
+        <button class="tab-btn" data-tab="practice" data-i18n="tab.practice">вњЌ Practice</button>
       </div>
 
       <!-- Tab content: Stroke Order Animation -->
@@ -83,13 +83,13 @@
           <div id="animationTarget"></div>
         </div>
         <div class="button-row">
-          <button id="playBtn" class="primary-btn" data-i18n="animation.play">▶ Play Animation</button>
-          <button id="loopBtn" class="secondary-btn" data-i18n="animation.loop">🔁 Loop</button>
+          <button id="playBtn" class="primary-btn" data-i18n="animation.play">в–¶ Play Animation</button>
+          <button id="loopBtn" class="secondary-btn" data-i18n="animation.loop">рџ”Ѓ Loop</button>
         </div>
         <div class="speed-selector" id="speedSelector">
-          <button class="speed-btn" data-speed="slow" data-i18n="speed.slow">🐢 Slow</button>
-          <button class="speed-btn active" data-speed="medium" data-i18n="speed.medium">⚡ Medium</button>
-          <button class="speed-btn" data-speed="fast" data-i18n="speed.fast">🚀 Fast</button>
+          <button class="speed-btn" data-speed="slow" data-i18n="speed.slow">рџђў Slow</button>
+          <button class="speed-btn active" data-speed="medium" data-i18n="speed.medium">вљЎ Medium</button>
+          <button class="speed-btn" data-speed="fast" data-i18n="speed.fast">рџљЂ Fast</button>
         </div>
         <div class="stroke-info" data-i18n="stroke.label">Strokes: <span id="strokeCount">0</span></div>
       </div>
@@ -101,17 +101,17 @@
           <span id="quizProgress"></span>
         </div>
         <div class="char-navigator hidden" id="charNavigator">
-          <button id="prevCharBtn" class="secondary-btn" data-i18n="char.prev">← Prev</button>
+          <button id="prevCharBtn" class="secondary-btn" data-i18n="char.prev">в†ђ Prev</button>
           <span id="charCounter"></span>
-          <button id="nextCharBtn" class="secondary-btn" data-i18n="char.next">Next →</button>
+          <button id="nextCharBtn" class="secondary-btn" data-i18n="char.next">Next в†’</button>
         </div>
         <div class="canvas-container practice-container">
           <div id="practiceTarget"></div>
         </div>
         <div class="button-row">
-          <button id="outlineToggleBtn" class="primary-btn" data-i18n="outline.hide">◻ Hide Outline</button>
-          <button id="showHintBtn" class="secondary-btn" data-i18n="hint.text">💡 Hint</button>
-          <button id="resetQuizBtn" class="secondary-btn" data-i18n="reset.btn">🔄 Reset &amp; Redraw</button>
+          <button id="outlineToggleBtn" class="primary-btn" data-i18n="outline.hide">в—» Hide Outline</button>
+          <button id="showHintBtn" class="secondary-btn" data-i18n="hint.text">рџ’Ў Hint</button>
+          <button id="resetQuizBtn" class="secondary-btn" data-i18n="reset.btn">рџ”„ Reset &amp; Redraw</button>
         </div>
       </div>
 
@@ -127,7 +127,7 @@
 
   <!-- ===== Footer ===== -->
   <footer class="footer">
-    <p data-i18n="footer.text">Powered by <a href="https://hanziwriter.org" target="_blank" rel="noopener">Hanzi Writer</a> · Data from <a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a></p>
+    <p data-i18n="footer.text">Powered by <a href="https://hanziwriter.org" target="_blank" rel="noopener">Hanzi Writer</a> В· Data from <a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a></p>
   </footer>
 
   <script src="app.js"></script>
@@ -136,7 +136,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('./sw.js').then(function (reg) {
-          console.log('Hanzi Studio SW registered:', reg.scope);
+          console.log('Practice Hanzi SW registered:', reg.scope);
         }).catch(function (err) {
           console.warn('SW registration failed:', err);
         });

@@ -1,6 +1,6 @@
 {
-  "name": "Hanzi Studio — Chinese Character Learning",
-  "short_name": "Hanzi Studio",
+  "name": "Practice Hanzi — Chinese Character Learning",
+  "short_name": "Practice Hanzi",
   "description": "Learn Chinese characters: stroke order animations, pinyin, definitions, and handwriting practice.",
   "start_url": "./index.html",
   "scope": "./",

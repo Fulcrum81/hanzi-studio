@@ -1,12 +1,12 @@
 /* ============================================================
-   Hanzi Studio — Main Application Logic
+   Practice Hanzi вЂ” Main Application Logic
    Supports single characters AND multi-character words:
    - Word search (Chinese, English, or pinyin)
    - Info card: pinyin + definition per character
    - Animation tab: stroke order, chained across all characters
    - Practice tab: Hanzi Writer quiz per character
-   - 米字格 (rice-grid) backgrounds for all canvases
-   - Pinyin autocomplete (plain latin → character suggestions)
+   - з±іе­—ж ј (rice-grid) backgrounds for all canvases
+   - Pinyin autocomplete (plain latin в†’ character suggestions)
    - i18n (English / Russian) with live switching
    ============================================================ */
 
@@ -77,10 +77,10 @@
     const saved = localStorage.getItem('hanzi-theme');
     if (saved === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
+      themeToggle.textContent = 'вЂпёЏ';
     } else {
       document.documentElement.removeAttribute('data-theme');
-      themeToggle.textContent = '🌙';
+      themeToggle.textContent = 'рџЊ™';
     }
   }
   function toggleTheme() {
@@ -88,11 +88,11 @@
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
       localStorage.setItem('hanzi-theme', 'light');
-      themeToggle.textContent = '🌙';
+      themeToggle.textContent = 'рџЊ™';
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('hanzi-theme', 'dark');
-      themeToggle.textContent = '☀️';
+      themeToggle.textContent = 'вЂпёЏ';
     }
     // Refresh practice canvas to apply new drawing / stroke / outline colors
     if (currentChars.length) {
@@ -155,7 +155,7 @@
     return document.documentElement.getAttribute('data-theme') === 'dark';
   }
 
-  // ---- 米字格 (rice-grid) SVG builder ----
+  // ---- з±іе­—ж ј (rice-grid) SVG builder ----
   function createGridSvg(width, height, padding) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttributeNS(null, 'width', width);
@@ -337,7 +337,7 @@
   function showError(msg) {
     splash.classList.add('hidden');
     resultPanel.classList.remove('hidden');
-    infoHanzi.textContent = '⚠️';
+    infoHanzi.textContent = 'вљ пёЏ';
     infoPinyin.textContent = '';
     infoDefinition.textContent = msg;
     infoRadical.textContent = '';
@@ -372,8 +372,8 @@
         .map((c) => {
           const info = lookupChar(c);
           return info
-            ? `<div class="word-def"><b>${c}</b> ${info.pinyin} — ${info.definition}</div>`
-            : `<div class="word-def"><b>${c}</b> — ${t('error.no_dict')}</div>`;
+            ? `<div class="word-def"><b>${c}</b> ${info.pinyin} вЂ” ${info.definition}</div>`
+            : `<div class="word-def"><b>${c}</b> вЂ” ${t('error.no_dict')}</div>`;
         })
         .join('');
     }
@@ -435,7 +435,7 @@
 
       const label = document.createElement('div');
       label.className = 'writer-label';
-      label.textContent = `${ch} · ${i + 1}`;
+      label.textContent = `${ch} В· ${i + 1}`;
       div.appendChild(label);
     });
 
@@ -443,7 +443,7 @@
   }
 
   function updateStrokeCount() {
-    strokeCount.textContent = '…';
+    strokeCount.textContent = 'вЂ¦';
     const counts = currentChars.map((ch) =>
       HanziWriter.loadCharacterData(ch)
         .then((d) => d.strokes.length)
@@ -456,7 +456,7 @@
           ? t('stroke.count_multi', { nums: valid.join(' + '), total: valid.reduce((a, b) => a + b, 0) })
           : t('stroke.count_single', { n: valid[0] });
       } else {
-        strokeCount.textContent = '—';
+        strokeCount.textContent = 'вЂ”';
       }
     });
   }

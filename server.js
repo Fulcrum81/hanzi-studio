@@ -1,4 +1,4 @@
-﻿// Static HTTPS server for PWA testing. Uses openssl for a proper certificate.
+// Static HTTPS server for PWA testing. Uses openssl for a proper certificate.
 // Phone access: https://<your-pc-ip>:8443
 
 const https = require('https');
@@ -77,7 +77,7 @@ server.listen(PORT, '0.0.0.0', () => {
     .filter((i) => i.family === 'IPv4' && !i.internal)
     .sort((a) => a.address.startsWith('192.168.') ? -1 : 1)
     .map((i) => i.address)[0] || '127.0.0.1';
-  console.log(`\n  Hanzi Studio HTTPS server ready!\n`);
+  console.log(`\n  Practice Hanzi HTTPS server ready!\n`);
   console.log(`  Local:    https://127.0.0.1:${PORT}`);
   console.log(`  Network:  https://${ip}:${PORT}`);
   console.log(`\n  Browser warning: tap "Proceed anyway" / "Advanced → Continue".\n`);
