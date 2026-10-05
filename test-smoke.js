@@ -55,6 +55,15 @@ function makeElement(id, tag) {
         };
         return walk(this);
       }
+      if (sel.startsWith('.')) {
+        const cls = sel.slice(1);
+        const walk = (el) => {
+          if (el.className && el.className.split(' ').includes(cls)) return el;
+          for (const c of el.children) { const r = walk(c); if (r) return r; }
+          return null;
+        };
+        return walk(this);
+      }
       return null;
     },
     querySelectorAll(sel) { return this.children.filter((c) => c.tagName === 'BUTTON' || sel.includes('tab')); },
@@ -68,6 +77,15 @@ function reg(id) {
     // Elements that start hidden in the real HTML
     if (['resultPanel', 'historyBar', 'charNavigator'].includes(id)) {
       elements[id].classList.add('hidden');
+    }
+    // themeToggle has two SVG children (moon visible, sun hidden)
+    if (id === 'themeToggle') {
+      const moon = makeElement();
+      moon.className = 'theme-icon-moon';
+      elements[id].appendChild(moon);
+      const sun = makeElement();
+      sun.className = 'theme-icon-sun hidden';
+      elements[id].appendChild(sun);
     }
   }
   return elements[id];
@@ -257,9 +275,9 @@ run('speed selector', () => {
 // 9. Outline toggle
 run('toggle outline', () => {
   reg('outlineToggleBtn').click();
-  if (!reg('outlineToggleBtn').innerHTML.includes('Show')) throw new Error('Outline should be hidden, got: ' + reg('outlineToggleBtn').innerHTML);
+  if (!reg('outlineToggleBtn').title.includes('Show')) throw new Error('Outline should be hidden, got: ' + reg('outlineToggleBtn').title);
   reg('outlineToggleBtn').click();
-  if (!reg('outlineToggleBtn').innerHTML.includes('Hide')) throw new Error('Outline should be visible again, got: ' + reg('outlineToggleBtn').innerHTML);
+  if (!reg('outlineToggleBtn').title.includes('Hide')) throw new Error('Outline should be visible again, got: ' + reg('outlineToggleBtn').title);
 });
 
 // 9. Reset practice (redraw)
@@ -275,9 +293,9 @@ run('show hint', () => {
 // 11. Theme toggle
 run('toggle theme', () => {
   reg('themeToggle').click();
-  if (!reg('themeToggle').textContent.includes('☀')) throw new Error('Theme should be dark');
+  if (sandbox.document.documentElement.getAttribute('data-theme') !== 'dark') throw new Error('Theme should be dark');
   reg('themeToggle').click();
-  if (!reg('themeToggle').textContent.includes('🌙')) throw new Error('Theme should be light');
+  if (sandbox.document.documentElement.getAttribute('data-theme') !== null) throw new Error('Theme should be light');
 });
 
 // 13. Prev / next char in multi-char word

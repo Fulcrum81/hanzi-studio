@@ -45,7 +45,7 @@
   const practiceTarget = $('#practiceTarget');
   const playBtn        = $('#playBtn');
   const loopBtn        = $('#loopBtn');
-  const speedBtns      = document.querySelectorAll('.speed-btn');
+  const speedBtns      = document.querySelectorAll('.speed-opt');
   const strokeCount    = $('#strokeCount');
   const outlineToggleBtn = $('#outlineToggleBtn');
   const resetQuizBtn   = $('#resetQuizBtn');
@@ -64,6 +64,7 @@
   function init() {
     loadTheme();
     loadLanguage();
+    updateLangToggle();
     loadOutlinePreference();
     bindEvents();
     if (location.hash && location.hash.length > 1) {
@@ -73,14 +74,18 @@
   }
 
   // ---- Theme ----
+  function setThemeIcons(dark) {
+    document.querySelector('.theme-icon-moon').classList.toggle('hidden', dark);
+    document.querySelector('.theme-icon-sun').classList.toggle('hidden', !dark);
+  }
   function loadTheme() {
     const saved = localStorage.getItem('hanzi-theme');
     if (saved === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
+      setThemeIcons(true);
     } else {
       document.documentElement.removeAttribute('data-theme');
-      themeToggle.textContent = '🌙';
+      setThemeIcons(false);
     }
   }
   function toggleTheme() {
@@ -88,11 +93,11 @@
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
       localStorage.setItem('hanzi-theme', 'light');
-      themeToggle.textContent = '🌙';
+      setThemeIcons(false);
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('hanzi-theme', 'dark');
-      themeToggle.textContent = '☀️';
+      setThemeIcons(true);
     }
     // Refresh practice canvas to apply new drawing / stroke / outline colors
     if (currentChars.length) {
@@ -101,6 +106,11 @@
   }
 
   // ---- Language events ----
+  function updateLangToggle() {
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+  }
   function onLangChange() {
     // Re-render info panel, quiz status, and dynamic text that uses t()
     if (currentChars.length) {
@@ -121,9 +131,13 @@
       }
     }
     // Update outline button
-    outlineToggleBtn.innerHTML = outlineVisible ? t('outline.hide') : t('outline.show');
+    outlineToggleBtn.setAttribute('data-i18n-title', outlineVisible ? 'outline.hide' : 'outline.show');
+    outlineToggleBtn.title = outlineVisible ? t('outline.hide') : t('outline.show');
+    outlineToggleBtn.classList.toggle('active', outlineVisible);
+    // Update lang toggle button
+    updateLangToggle();
     // Update loop button
-    loopBtn.innerHTML = isAnimLooping ? t('animation.stop') : t('animation.loop');
+    setLoopBtn(isAnimLooping);
     // Update stroke count
     updateStrokeCount();
     // Update history label
@@ -478,6 +492,7 @@
     if (currentChars.length) {
       stopLoop();
       isAnimating = false;
+      playBtn.classList.remove('active');
       loadAnimationWriters();
     }
   }
@@ -487,12 +502,13 @@
     if (!animWriters.length) return;
     stopLoop();
     isAnimating = true;
+    playBtn.classList.add('active');
     chainAnimate(0);
   }
 
   function chainAnimate(idx) {
-    if (!isAnimating) { isAnimating = false; return; }
-    if (idx >= animWriters.length) { isAnimating = false; return; }
+    if (!isAnimating) { isAnimating = false; playBtn.classList.remove('active'); return; }
+    if (idx >= animWriters.length) { isAnimating = false; playBtn.classList.remove('active'); return; }
     const params = getSpeedParams();
     animWriters[idx].animateCharacter({
       onComplete: function () {
@@ -500,6 +516,7 @@
           setTimeout(() => chainAnimate(idx + 1), params.chainDelay);
         } else {
           isAnimating = false;
+          playBtn.classList.remove('active');
         }
       }
     });
@@ -512,7 +529,7 @@
     } else {
       isAnimLooping = true;
       isAnimating = true;
-      loopBtn.innerHTML = t('animation.stop');
+      setLoopBtn(true);
       loopChain(0);
     }
   }
@@ -528,15 +545,23 @@
     });
   }
 
+  function setLoopBtn(looping) {
+    document.querySelector('.ctrl-loop-icon').classList.toggle('hidden', looping);
+    document.querySelector('.ctrl-stop-icon').classList.toggle('hidden', !looping);
+    loopBtn.title = looping ? t('animation.stop') : t('animation.loop');
+    loopBtn.classList.toggle('active', looping);
+  }
+
   function stopLoop() {
     isAnimLooping = false;
-    loopBtn.innerHTML = t('animation.loop');
+    setLoopBtn(false);
   }
 
   function resetAnimationButtons() {
     isAnimLooping = false;
     isAnimating = false;
-    loopBtn.innerHTML = t('animation.loop');
+    playBtn.classList.remove('active');
+    setLoopBtn(false);
   }
 
   // ---- Outline persistence ----
@@ -604,7 +629,8 @@
       renderer: 'svg'
     });
     quizWriters[ch] = writer;
-    outlineToggleBtn.innerHTML = outlineVisible ? t('outline.hide') : t('outline.show');
+    outlineToggleBtn.setAttribute('data-i18n-title', outlineVisible ? 'outline.hide' : 'outline.show');
+    outlineToggleBtn.title = outlineVisible ? t('outline.hide') : t('outline.show');
     if (!outlineVisible) {
       writer.hideOutline({ duration: 0 });
     }
@@ -647,13 +673,17 @@
       writer.hideOutline({ duration: 200 });
       outlineVisible = false;
       saveOutlinePreference();
-      outlineToggleBtn.innerHTML = t('outline.show');
+      outlineToggleBtn.setAttribute('data-i18n-title', 'outline.show');
+      outlineToggleBtn.title = t('outline.show');
+      outlineToggleBtn.classList.remove('active');
       quizStatus.textContent = t('practice.draw_no_outline');
     } else {
       writer.showOutline({ duration: 200 });
       outlineVisible = true;
       saveOutlinePreference();
-      outlineToggleBtn.innerHTML = t('outline.hide');
+      outlineToggleBtn.setAttribute('data-i18n-title', 'outline.hide');
+      outlineToggleBtn.title = t('outline.hide');
+      outlineToggleBtn.classList.add('active');
       quizStatus.textContent = t('practice.draw');
     }
   }
@@ -814,10 +844,12 @@
     nextCharBtn.addEventListener('click', nextChar);
 
     // Language switch
-    langBtns.forEach((btn) => btn.addEventListener('click', () => {
-      switchLanguage(btn.dataset.lang);
+    $('#langToggle').addEventListener('click', () => {
+      const next = currentLang === 'en' ? 'ru' : 'en';
+      switchLanguage(next);
+      updateLangToggle();
       onLangChange();
-    }));
+    });
     // Listen for langchange event from i18n.js (in case it's triggered programmatically)
     document.addEventListener('langchange', onLangChange);
 
