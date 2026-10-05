@@ -3,7 +3,8 @@
    Simple cache-first PWA with offline support.
    ============================================================ */
 
-const CACHE_NAME = 'practice-hanzi-v1';
+// Increment this version on every deploy to force a fresh SW install
+const CACHE_NAME = 'practice-hanzi-v2';
 const CORE_ASSETS = [
   './',
   './index.html',
