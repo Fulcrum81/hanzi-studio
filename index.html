@@ -29,11 +29,20 @@
       <span class="logo-text">Practice Hanzi</span>
     </div>
     <div class="header-controls">
-      <div class="lang-selector">
-        <button class="lang-btn active" data-lang="en" data-i18n-title="lang.switch" title="Language">EN</button>
-        <button class="lang-btn" data-lang="ru" data-i18n-title="lang.switch" title="Language">RU</button>
+      <div class="lang-toggle" id="langToggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
       </div>
-      <button id="themeToggle" class="icon-btn" data-i18n-title="search.random" title="Toggle theme">🌙</button>
+      <button id="themeToggle" class="icon-btn" title="Toggle theme">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.7422 2.25L18.037 3.0466C18.4235 4.09117 18.6167 4.61345 18.9977 4.99445C19.3787 5.37545 19.901 5.56871 20.9456 5.95523L21.7422 6.25L20.9456 6.54477C19.901 6.93129 19.3787 7.12455 18.9977 7.50555C18.6167 7.88655 18.4235 8.40883 18.037 9.4534L17.7422 10.25L17.4474 9.4534C17.0609 8.40883 16.8676 7.88655 16.4866 7.50555C16.1056 7.12455 15.5834 6.93129 14.5388 6.54477L13.7422 6.25L14.5388 5.95523C15.5834 5.56871 16.1056 5.37545 16.4866 4.99445C16.8676 4.61345 17.0609 4.09117 17.4474 3.0466L17.7422 2.25Z"/>
+          <path d="M21.2422 14.3284C20.0425 14.9689 18.6723 15.3321 17.2173 15.3321C12.4913 15.3321 8.66011 11.5009 8.66011 6.77485C8.66011 5.31986 9.02324 3.94968 9.66382 2.75C5.40984 3.74698 2.24219 7.56513 2.24219 12.1231C2.24219 17.4399 6.55229 21.75 11.8691 21.75C16.4271 21.75 20.2452 18.5824 21.2422 14.3284Z"/>
+        </svg>
+        <svg class="theme-icon theme-icon-sun hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"/>
+          <path d="M11.9982 2V4M11.9982 20V22M18.9981 5.00098L17.499 6.5M6.5 17.5L5 19M22 12H20M4 12H2M19 19.001L17.5 17.501M6.49902 6.5L5 5.00098"/>
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -45,7 +54,17 @@
         <div class="autocomplete-list" id="autocompleteList"></div>
       </div>
       <button id="searchBtn" class="primary-btn" data-i18n="search.btn">Search</button>
-      <button id="randomBtn" class="icon-btn" data-i18n-title="search.random" title="Random character">🎲</button>
+      <button id="randomBtn" class="icon-btn" data-i18n-title="search.random" title="Random character">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 9H8C5.17157 9 3.75736 9 2.87868 9.87868C2 10.7574 2 12.1716 2 15V16C2 18.8284 2 20.2426 2.87868 21.1213C3.75736 22 5.17157 22 8 22H9C11.8284 22 13.2426 22 14.1213 21.1213C15 20.2426 15 18.8284 15 16V15C15 12.1716 15 10.7574 14.1213 9.87868C13.2426 9 11.8284 9 9 9Z"/>
+              <path d="M18.0003 14.9827C19.5537 14.9359 20.4803 14.7626 21.1216 14.1213C22.0003 13.2426 22.0003 11.8284 22.0003 9V8C22.0003 5.17157 22.0003 3.75736 21.1216 2.87868C20.2429 2 18.8287 2 16.0003 2H15.0003C12.1718 2 10.7576 2 9.87893 2.87868C9.23763 3.51998 9.06438 4.44655 9.01758 6"/>
+              <path d="M6.5 13.25V13.5M7 13.5C7 13.7761 6.77614 14 6.5 14C6.22386 14 6 13.7761 6 13.5C6 13.2239 6.22386 13 6.5 13C6.77614 13 7 13.2239 7 13.5Z"/>
+              <path d="M13 5.75V6M13.5 6C13.5 6.27614 13.2761 6.5 13 6.5C12.7239 6.5 12.5 6.27614 12.5 6C12.5 5.72386 12.7239 5.5 13 5.5C13.2761 5.5 13.5 5.72386 13.5 6Z"/>
+              <path d="M18 5.75V6M18.5 6C18.5 6.27614 18.2761 6.5 18 6.5C17.7239 6.5 17.5 6.27614 17.5 6C17.5 5.72386 17.7239 5.5 18 5.5C18.2761 5.5 18.5 5.72386 18.5 6Z"/>
+              <path d="M18 10.75V11M18.5 11C18.5 11.2761 18.2761 11.5 18 11.5C17.7239 11.5 17.5 11.2761 17.5 11C17.5 10.7239 17.7239 10.5 18 10.5C18.2761 10.5 18.5 10.7239 18.5 11Z"/>
+              <path d="M10.5 17.25V17.5M11 17.5C11 17.7761 10.7761 18 10.5 18C10.2239 18 10 17.7761 10 17.5C10 17.2239 10.2239 17 10.5 17C10.7761 17 11 17.2239 11 17.5Z"/>
+            </svg>
+          </button>
     </div>
   </section>
 
@@ -73,8 +92,20 @@
 
       <!-- Tab bar -->
       <div class="tab-bar">
-        <button class="tab-btn active" data-tab="animate" data-i18n="tab.animate">▶ Stroke Order</button>
-        <button class="tab-btn" data-tab="practice" data-i18n="tab.practice">✍ Practice</button>
+        <button class="tab-btn active" data-tab="animate">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+            <path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/>
+          </svg>
+          <span data-i18n="tab.animate">Stroke Order</span>
+        </button>
+        <button class="tab-btn" data-tab="practice">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.5502 3C6.69782 3.00694 4.6805 3.10152 3.39128 4.39073C2 5.78202 2 8.02125 2 12.4997C2 16.9782 2 19.2174 3.39128 20.6087C4.78257 22 7.0218 22 11.5003 22C15.9787 22 18.218 22 19.6093 20.6087C20.8985 19.3195 20.9931 17.3022 21 13.4498"/>
+            <path d="M11.0556 13C10.3322 3.86635 16.8023 1.27554 21.9805 2.16439C22.1896 5.19136 20.7085 6.32482 17.8879 6.84825C18.4326 7.41736 19.395 8.13354 19.2912 9.02879C19.2173 9.66586 18.7846 9.97843 17.9194 10.6036C16.0231 11.9736 13.8264 12.8375 11.0556 13Z"/>
+            <path d="M9 17C11 11.5 12.9604 9.63636 15 8"/>
+          </svg>
+          <span data-i18n="tab.practice">Practice</span>
+        </button>
       </div>
 
       <!-- Tab content: Stroke Order Animation -->
@@ -82,14 +113,22 @@
         <div class="canvas-container">
           <div id="animationTarget"></div>
         </div>
-        <div class="button-row">
-          <button id="playBtn" class="primary-btn" data-i18n="animation.play">▶ Play Animation</button>
-          <button id="loopBtn" class="secondary-btn" data-i18n="animation.loop">🔁 Loop</button>
-        </div>
-        <div class="speed-selector" id="speedSelector">
-          <button class="speed-btn" data-speed="slow" data-i18n="speed.slow">🐢 Slow</button>
-          <button class="speed-btn active" data-speed="medium" data-i18n="speed.medium">⚡ Medium</button>
-          <button class="speed-btn" data-speed="fast" data-i18n="speed.fast">🚀 Fast</button>
+        <div class="anim-controls">
+          <button id="playBtn" class="control-square"><svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M18.8906 12.846C18.5371 14.189 16.8667 15.138 13.5257 17.0361C10.296 18.8709 8.6812 19.7884 7.37983 19.4196C6.8418 19.2671 6.35159 18.9776 5.95624 18.5787C5 17.6139 5 15.7426 5 12C5 8.2574 5 6.3861 5.95624 5.42132C6.35159 5.02245 6.8418 4.73288 7.37983 4.58042C8.6812 4.21165 10.296 5.12907 13.5257 6.96393C16.8667 8.86197 18.5371 9.811 18.8906 11.154C19.0365 11.7084 19.0365 12.2916 18.8906 12.846Z"/></svg></button>
+          <button id="loopBtn" class="control-square">
+            <svg class="ctrl-icon ctrl-loop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16.3884 3L17.3913 3.97574C17.8393 4.41165 18.0633 4.62961 17.9844 4.81481C17.9056 5 17.5888 5 16.9552 5H9.19422C5.22096 5 2 8.13401 2 12C2 13.4872 2.47668 14.8662 3.2895 16"/>
+              <path d="M7.61156 21L6.60875 20.0243C6.16074 19.5883 5.93673 19.3704 6.01557 19.1852C6.09441 19 6.4112 19 7.04478 19H14.8058C18.779 19 22 15.866 22 12C22 10.5128 21.5233 9.13383 20.7105 8"/>
+            </svg>
+            <svg class="ctrl-icon ctrl-stop-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+  <path d="M4 12C4 8.72077 4 7.08116 4.81382 5.91891C5.1149 5.48891 5.48891 5.1149 5.91891 4.81382C7.08116 4 8.72077 4 12 4C15.2792 4 16.9188 4 18.0811 4.81382C18.5111 5.1149 18.8851 5.48891 19.1862 5.91891C20 7.08116 20 8.72077 20 12C20 15.2792 20 16.9188 19.1862 18.0811C18.8851 18.5111 18.5111 18.8851 18.0811 19.1862C16.9188 20 15.2792 20 12 20C8.72077 20 7.08116 20 5.91891 19.1862C5.48891 18.8851 5.1149 18.5111 4.81382 18.0811C4 16.9188 4 15.2792 4 12Z"/>
+</svg>
+          </button>
+          <div class="control-square speed-container" id="speedSelector">
+            <button class="speed-opt active" data-speed="fast" data-i18n="speed.fast">🚀 Fast</button>
+            <button class="speed-opt" data-speed="medium" data-i18n="speed.medium">⚡ Medium</button>
+            <button class="speed-opt" data-speed="slow" data-i18n="speed.slow">🐢 Slow</button>
+          </div>
         </div>
         <div class="stroke-info"><span data-i18n="stroke.label">Strokes:</span> <span id="strokeCount">0</span></div>
       </div>
@@ -108,10 +147,32 @@
         <div class="canvas-container practice-container">
           <div id="practiceTarget"></div>
         </div>
-        <div class="button-row">
-          <button id="outlineToggleBtn" class="primary-btn" data-i18n="outline.hide">◻ Hide Outline</button>
-          <button id="showHintBtn" class="secondary-btn" data-i18n="hint.text">💡 Hint</button>
-          <button id="resetQuizBtn" class="secondary-btn" data-i18n="reset.btn">🔄 Reset &amp; Redraw</button>
+        <div class="anim-controls" id="practiceControls">
+          <button id="outlineToggleBtn" class="control-square" data-i18n-title="outline.hide">
+            <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 8C4 5.17157 4 3.75736 5.00421 2.87868C6.00841 2 7.62465 2 10.8571 2H13.1429C16.3753 2 17.9916 2 18.9958 2.87868C20 3.75736 20 5.17157 20 8V17H4V8Z" stroke-linejoin="round"/>
+              <path d="M3 17H21"/>
+              <path d="M10.6987 5.56588C11.9289 5.38957 13.9674 5.4601 12.2803 7.15266C10.1715 9.26836 7.00837 14.0289 10.6987 12.4421C14.3891 10.8554 15.9709 11.9132 14.3893 13.5"/>
+              <path d="M12 17V21"/>
+              <path d="M5 22L8 17"/>
+              <path d="M19 22L16 17"/>
+            </svg>
+          </button>
+          <button id="showHintBtn" class="control-square" data-i18n-title="hint.text">
+            <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.2916 16C18.9525 14.5341 20 12.3894 20 10C20 5.58173 16.4182 2 12 2C7.58173 2 4 5.58173 4 10C4 12.3894 5.04751 14.5341 6.70836 16"/>
+              <path d="M12.0532 13.8996H12.0032M10 8C10 6.89544 10.8954 6 12 6C13.1046 6 14 6.89544 14 8C14 8.75709 13.5793 9.41593 12.959 9.75553C12.4745 10.0207 12 10.4477 12 11M12.1032 13.8996C12.1032 13.9548 12.0584 13.9996 12.0032 13.9996C11.948 13.9996 11.9032 13.9548 11.9032 13.8996C11.9032 13.8443 11.948 13.7996 12.0032 13.7996C12.0584 13.7996 12.1032 13.8443 12.1032 13.8996Z"/>
+              <path d="M8.5 19H15.5"/>
+              <path d="M10 22H14"/>
+            </svg>
+          </button>
+          <button id="resetQuizBtn" class="control-square" data-i18n-title="reset.btn">
+            <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C15.0413 2 17.7655 3.35767 19.5996 5.5"/>
+              <path d="M20 2.5V6H16.5"/>
+              <path d="M15.9453 12.3577C15.7686 12.9844 14.9333 13.4273 13.2629 14.3131C11.648 15.1693 10.8406 15.5975 10.1899 15.4254C9.9209 15.3542 9.6758 15.2191 9.47812 15.0329C9 14.5827 9 13.7094 9 11.9629C9 10.2163 9 9.34307 9.47812 8.89284C9.6758 8.7067 9.9209 8.57157 10.1899 8.50042C10.8406 8.32833 11.648 8.75646 13.2629 9.61272C14.9333 10.4985 15.7686 10.9414 15.9453 11.5681C16.0182 11.8268 16.0182 12.099 15.9453 12.3577Z"/>
+            </svg>
+          </button>
         </div>
       </div>
 
