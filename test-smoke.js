@@ -72,6 +72,10 @@ function makeElement(id, tag) {
 
 const elements = {};
 function reg(id) {
+  // repeatModeBtn is the same DOM element as modeRepeat
+  if (id === 'repeatModeBtn') {
+    return reg('modeRepeat');
+  }
   if (!elements[id]) {
     elements[id] = makeElement(id);
     // Elements that start hidden in the real HTML
@@ -87,6 +91,11 @@ function reg(id) {
       sun.className = 'theme-icon-sun hidden';
       elements[id].appendChild(sun);
     }
+    // Mode buttons need data-mode
+    if (id === 'modeFree') elements[id].dataset.mode = 'free';
+    if (id === 'modeGuided') elements[id].dataset.mode = 'guided';
+    if (id === 'modeRepeat') { elements[id].dataset.mode = 'repeat'; elements[id].id = 'repeatModeBtn'; }
+    if (id === 'repeatModeBtn') { /* alias — same as modeRepeat */ }
   }
   return elements[id];
 }
@@ -107,6 +116,7 @@ const documentMock = {
     if (sel === '.tab-content') return [reg('tabAnimate'), reg('tabPractice')];
     if (sel === '.lang-btn') return [reg('langEn'), reg('langRu')];
     if (sel === '.speed-btn') return [];
+    if (sel === '.mode-btn') return [reg('modeFree'), reg('modeGuided'), reg('modeRepeat')];
     return [];
   },
   createElement(tag) { return makeElement(null, tag); },
@@ -304,6 +314,32 @@ run('navigate chars in word', () => {
   reg('searchBtn').click();
   reg('nextCharBtn').click();
   reg('prevCharBtn').click();
+});
+
+// 14. Practice mode switching
+run('switch to guided mode', () => {
+  reg('modeGuided').click();
+  if (reg('modeGuided').classList.contains('active') === false) throw new Error('Guided mode should be active');
+});
+run('switch to repeat mode', () => {
+  reg('modeRepeat').click();
+  if (reg('modeRepeat').classList.contains('active') === false) throw new Error('Repeat mode should be active');
+  if (!reg('modeRepeat').innerHTML.includes('3')) throw new Error('Repeat should show count 3, got: ' + reg('modeRepeat').innerHTML);
+});
+run('cycle repeat count', () => {
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('5')) throw new Error('Repeat should show count 5, got: ' + reg('modeRepeat').innerHTML);
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('100')) throw new Error('Repeat should show count 100, got: ' + reg('modeRepeat').innerHTML);
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('3')) throw new Error('Repeat should wrap back to 3, got: ' + reg('modeRepeat').innerHTML);
+});
+run('switch back to free mode', () => {
+  reg('modeFree').click();
+  if (reg('modeFree').classList.contains('active') === false) throw new Error('Free mode should be active');
 });
 
 console.log('\n=== Smoke test results ===');
