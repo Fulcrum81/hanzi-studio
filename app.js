@@ -162,7 +162,7 @@
   }
 
   function drawingColor() {
-    return isDarkTheme() ? '#ddd' : '#333';
+    return isDarkTheme() ? '#ffffff' : '#333';
   }
 
   function isDarkTheme() {
@@ -617,7 +617,7 @@
       width: size,
       height: size,
       padding: pad,
-      strokeColor: isDarkTheme() ? '#999' : '#555',
+      strokeColor: isDarkTheme() ? '#e0e0ee' : '#555',
       radicalColor: '#e74c3c',
       outlineColor: isDarkTheme() ? '#666' : '#ccc',
       drawingColor: drawingColor(),
