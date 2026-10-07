@@ -703,7 +703,7 @@
         const total = data.strokes.length;
         quizStatus.textContent = t('mode.guided_prompt', { num: 1, total });
         quizProgress.textContent = t('practice.stroke_correct', { num: 1, remaining: total - 1 });
-        writer.highlightStroke(0);
+        writer.highlightStroke(0, { duration: 600 });
         // currentNextStroke stays 0 until the user actually draws the first stroke
       }).catch(() => {
         quizStatus.textContent = t('practice.draw_strokes', { char: ch });
@@ -755,7 +755,7 @@
           // Auto-highlight next stroke after a brief pause
           if (data.strokesRemaining > 0) {
             setTimeout(() => {
-              writer.highlightStroke(data.strokeNum + 1);
+              writer.highlightStroke(data.strokeNum + 1, { duration: 600 });
             }, 350);
           }
         } else {
@@ -837,7 +837,7 @@
 
     HanziWriter.loadCharacterData(currentChars[practicePos]).then((data) => {
       if (strokeNum < data.strokes.length) {
-        writer.highlightStroke(strokeNum);
+        writer.highlightStroke(strokeNum, { duration: 400 });
         quizStatus.textContent = t('hint.highlighted', { num: strokeNum + 1, total: data.strokes.length });
       } else {
         quizStatus.textContent = t('hint.done');
