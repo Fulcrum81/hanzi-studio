@@ -711,10 +711,7 @@
     } else {
       quizStatus.textContent = t('practice.draw_strokes', { char: ch });
       if (practiceMode === 'repeat') {
-        const label = repeatCount >= 100
-          ? t('mode.easter_egg', { n: repeatCount })
-          : t('mode.repeat_count') + ' ' + repeatRemaining + '/' + repeatCount + 'x';
-        quizProgress.textContent = label;
+        quizProgress.textContent = t('mode.repeat_count') + ' ' + repeatRemaining + '/' + repeatCount + 'x';
       } else {
         quizProgress.textContent = '';
       }
@@ -722,6 +719,7 @@
 
     const quizOpts = {
       showHintAfterMisses: practiceMode === 'guided' ? 1 : 3,
+      ...(practiceMode === 'guided' ? { strokeAnimationSpeed: 0.8 } : {}),
       onComplete: function (data) {
         if (practiceMode === 'guided') {
           quizStatus.textContent = t('practice.complete', { char: ch });

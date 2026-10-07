@@ -125,9 +125,35 @@
 </svg>
           </button>
           <div class="control-square speed-container" id="speedSelector">
-            <button class="speed-opt active" data-speed="fast" data-i18n="speed.fast">🚀 Fast</button>
-            <button class="speed-opt" data-speed="medium" data-i18n="speed.medium">⚡ Medium</button>
-            <button class="speed-opt" data-speed="slow" data-i18n="speed.slow">🐢 Slow</button>
+            <button class="speed-opt active" data-speed="fast">
+              <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6.21875 11.618L3.31189 11.2378C2.71644 11.1606 2.31883 10.5841 2.58348 10.0458C3.42523 8.33365 5.6195 6.35437 9.73988 6.68079M6.21875 11.618C7.27445 9.85426 8.57175 8.00435 9.73988 6.68079M6.21875 11.618L11.882 17.2812M9.73988 6.68079C13.4105 2.58986 17.1745 1.728 19.5937 2.06685C20.5508 2.2009 21.2991 2.94917 21.4332 3.90626C21.772 6.32551 20.9101 10.0895 16.8192 13.7601M11.882 17.2812L12.2622 20.1881C12.3394 20.7836 12.9159 21.1812 13.4542 20.9165C15.1664 20.0748 17.1456 17.8805 16.8192 13.7601M11.882 17.2812C13.6457 16.2255 15.4956 14.9282 16.8192 13.7601"></path>
+                <path d="M17.5 8C17.5 6.89543 16.6046 6 15.5 6C14.3954 6 13.5 6.89543 13.5 8C13.5 9.10457 14.3954 10 15.5 10C16.6046 10 17.5 9.10457 17.5 8Z"></path>
+                <path d="M4 22L8 18M4 17L5.5 15.5"></path>
+              </svg>
+              <span data-i18n="speed.fast">Fast</span>
+            </button>
+            <button class="speed-opt" data-speed="medium">
+              <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4.5 11.7073C3.83222 12.0634 3.34135 12.6373 2.98052 13.2888C2.25918 14.591 2.05755 16.2028 2.00119 17.0021C1.98176 17.2775 2.20345 17.5 2.47992 17.5H3.98173M2.98052 13.2888C2.98052 10.144 3.89594 6.34904 5.72678 4.71122C5.88815 4.56686 6.10124 4.5 6.31787 4.5H11.1118C11.6911 4.5 12.2694 4.6171 12.7553 4.93222C13.9539 5.70953 15.7652 7.27971 17.3038 9.68934C17.4311 9.88859 17.6211 10.0398 17.8435 10.1204C18.7292 10.4415 19.7153 10.887 20.3463 11.1839C20.7723 11.3844 21.1116 11.7341 21.273 12.176C21.7174 13.393 21.9682 14.7508 22 16.9994C22.0038 17.2755 21.7793 17.5 21.5028 17.5H20.001M15.9962 17.5H7.98654" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M8 17.5C8 18.6046 7.10457 19.5 6 19.5C4.89543 19.5 4 18.6046 4 17.5C4 16.3954 4.89543 15.5 6 15.5C7.10457 15.5 8 16.3954 8 17.5Z"></path>
+                <path d="M20 17.5C20 18.6046 19.1046 19.5 18 19.5C16.8954 19.5 16 18.6046 16 17.5C16 16.3954 16.8954 15.5 18 15.5C19.1046 15.5 20 16.3954 20 17.5Z"></path>
+                <path d="M17.5 10C14.5 9 11 8.5 7 9C7 7 8 5 8.5 4.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M8 11H9" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <span data-i18n="speed.medium">Medium</span>
+            </button>
+            <button class="speed-opt" data-speed="slow">
+              <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                <path d="M17 12C17 8.13401 13.866 5 10 5C6.13401 5 3 8.13401 3 12" stroke-linecap="round"></path>
+                <path d="M17 15C18.6569 15 20 13.6569 20 12C21.1046 12 22 11.1046 22 10C22 8.89543 21.1046 8 20 8H19.5C18.1193 8 17 9.11929 17 10.5V12"></path>
+                <path d="M3 14.5L2.6405 17.376C2.5659 17.9728 3.03128 18.5 3.63278 18.5H5C5.55228 18.5 6 18.0523 6 17.5V15" stroke-linecap="round"></path>
+                <path d="M14 15V17.5C14 18.0523 14.4477 18.5 15 18.5H16.347C16.9555 18.5 17.423 17.961 17.3369 17.3586L17 15" stroke-linecap="round"></path>
+                <path d="M17 12H15.4343C14.4911 12 13.5608 12.2196 12.7171 12.6414C11.0067 13.4967 8.99334 13.4967 7.28286 12.6414C6.43921 12.2196 5.50894 12 4.56572 12H2V12.882C2 13.5672 2.38713 14.1936 3 14.5" stroke-linecap="round"></path>
+                <path d="M6 16C8.51806 17.259 11.4819 17.259 14 16" stroke-linecap="round"></path>
+              </svg>
+              <span data-i18n="speed.slow">Slow</span>
+            </button>
           </div>
         </div>
         <div class="stroke-info"><span data-i18n="stroke.label">Strokes:</span> <span id="strokeCount">0</span></div>

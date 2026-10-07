@@ -96,6 +96,10 @@ function reg(id) {
     if (id === 'modeGuided') elements[id].dataset.mode = 'guided';
     if (id === 'modeRepeat') { elements[id].dataset.mode = 'repeat'; elements[id].id = 'repeatModeBtn'; }
     if (id === 'repeatModeBtn') { /* alias — same as modeRepeat */ }
+    // Speed options need data-speed
+    if (id === 'speedOptFast') elements[id].dataset.speed = 'fast';
+    if (id === 'speedOptMedium') elements[id].dataset.speed = 'medium';
+    if (id === 'speedOptSlow') elements[id].dataset.speed = 'slow';
   }
   return elements[id];
 }
@@ -115,7 +119,7 @@ const documentMock = {
     if (sel === '.tab-btn') return [reg('tabAnimate'), reg('tabPractice')];
     if (sel === '.tab-content') return [reg('tabAnimate'), reg('tabPractice')];
     if (sel === '.lang-btn') return [reg('langEn'), reg('langRu')];
-    if (sel === '.speed-btn') return [];
+    if (sel === '.speed-opt') return [reg('speedOptFast'), reg('speedOptMedium'), reg('speedOptSlow')];
     if (sel === '.mode-btn') return [reg('modeFree'), reg('modeGuided'), reg('modeRepeat')];
     return [];
   },
@@ -274,12 +278,10 @@ run('toggle loop', () => {
   reg('loopBtn').click(); // off
 });
 
-// 8. Speed selector (verify the module doesn't crash with empty speed button list)
+// 8. Speed selector
 run('speed selector', () => {
-  // In the mock DOM there are no .speed-btn elements, so the forEach is a no-op.
-  // This test just ensures the code path doesn't throw.
-  const btns = sandbox.document.querySelectorAll('.speed-btn');
-  if (btns.length !== 0) throw new Error('Expected no speed buttons in mock');
+  const btns = sandbox.document.querySelectorAll('.speed-opt');
+  if (btns.length !== 3) throw new Error('Expected 3 speed option buttons, got ' + btns.length);
 });
 
 // 9. Outline toggle
