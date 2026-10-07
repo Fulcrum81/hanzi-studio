@@ -675,9 +675,9 @@
       showHintAfterMisses: 3,
       highlightOnComplete: true,
       ...(practiceMode === 'guided' ? {
-        strokeAnimationSpeed: 0.2,
-        strokeHighlightSpeed: 0.5,
-        strokeFadeDuration: 600,
+        strokeAnimationSpeed: 0.4,
+        strokeHighlightSpeed: 1.0,
+        strokeFadeDuration: 500,
       } : {}),
       renderer: 'svg'
     });
