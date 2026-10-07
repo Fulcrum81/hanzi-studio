@@ -674,6 +674,7 @@
       showOutline: outlineVisible,
       showHintAfterMisses: 3,
       highlightOnComplete: true,
+      strokeAnimationSpeed: practiceMode === 'guided' ? 0.2 : undefined,
       renderer: 'svg'
     });
     quizWriters[ch] = writer;
@@ -719,7 +720,6 @@
 
     const quizOpts = {
       showHintAfterMisses: practiceMode === 'guided' ? 1 : 3,
-      ...(practiceMode === 'guided' ? { strokeAnimationSpeed: 0.8 } : {}),
       onComplete: function (data) {
         if (practiceMode === 'guided') {
           quizStatus.textContent = t('practice.complete', { char: ch });
