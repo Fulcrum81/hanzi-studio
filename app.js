@@ -674,7 +674,11 @@
       showOutline: outlineVisible,
       showHintAfterMisses: 3,
       highlightOnComplete: true,
-      strokeAnimationSpeed: practiceMode === 'guided' ? 0.2 : undefined,
+      ...(practiceMode === 'guided' ? {
+        strokeAnimationSpeed: 0.2,
+        strokeHighlightSpeed: 0.5,
+        strokeFadeDuration: 600,
+      } : {}),
       renderer: 'svg'
     });
     quizWriters[ch] = writer;
@@ -704,7 +708,7 @@
         const total = data.strokes.length;
         quizStatus.textContent = t('mode.guided_prompt', { num: 1, total });
         quizProgress.textContent = t('practice.stroke_correct', { num: 1, remaining: total - 1 });
-        writer.highlightStroke(0, { duration: 600 });
+        writer.highlightStroke(0);
         // currentNextStroke stays 0 until the user actually draws the first stroke
       }).catch(() => {
         quizStatus.textContent = t('practice.draw_strokes', { char: ch });
@@ -755,7 +759,7 @@
           // Auto-highlight next stroke after a brief pause
           if (data.strokesRemaining > 0) {
             setTimeout(() => {
-              writer.highlightStroke(data.strokeNum + 1, { duration: 600 });
+              writer.highlightStroke(data.strokeNum + 1);
             }, 350);
           }
         } else {
@@ -837,7 +841,7 @@
 
     HanziWriter.loadCharacterData(currentChars[practicePos]).then((data) => {
       if (strokeNum < data.strokes.length) {
-        writer.highlightStroke(strokeNum, { duration: 400 });
+        writer.highlightStroke(strokeNum);
         quizStatus.textContent = t('hint.highlighted', { num: strokeNum + 1, total: data.strokes.length });
       } else {
         quizStatus.textContent = t('hint.done');
