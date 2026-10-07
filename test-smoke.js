@@ -79,7 +79,7 @@ function reg(id) {
   if (!elements[id]) {
     elements[id] = makeElement(id);
     // Elements that start hidden in the real HTML
-    if (['resultPanel', 'historyBar', 'charNavigator'].includes(id)) {
+    if (['resultPanel', 'historyBar', 'charNavigator', 'easterOverlay'].includes(id)) {
       elements[id].classList.add('hidden');
     }
     // themeToggle has two SVG children (moon visible, sun hidden)
@@ -324,11 +324,11 @@ run('switch to guided mode', () => {
 run('switch to repeat mode', () => {
   reg('modeRepeat').click();
   if (reg('modeRepeat').classList.contains('active') === false) throw new Error('Repeat mode should be active');
-  if (!reg('modeRepeat').innerHTML.includes('3')) throw new Error('Repeat should show count 3, got: ' + reg('modeRepeat').innerHTML);
+  if (!reg('modeRepeat').innerHTML.includes('3x')) throw new Error('Repeat should show "3x", got: ' + reg('modeRepeat').innerHTML);
 });
 run('cycle repeat count', () => {
   reg('modeRepeat').click();
-  if (!reg('modeRepeat').innerHTML.includes('5')) throw new Error('Repeat should show count 5, got: ' + reg('modeRepeat').innerHTML);
+  if (!reg('modeRepeat').innerHTML.includes('5x')) throw new Error('Repeat should show "5x", got: ' + reg('modeRepeat').innerHTML);
   reg('modeRepeat').click();
   reg('modeRepeat').click();
   reg('modeRepeat').click();

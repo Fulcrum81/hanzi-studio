@@ -62,6 +62,9 @@
   const historyChips   = $('#historyChips');
   const autoList       = $('#autocompleteList');
   const langBtns       = document.querySelectorAll('.lang-btn');
+  const easterOverlay  = $('#easterOverlay');
+  const easterMessage  = $('#easterMessage');
+  const easterOkBtn    = $('#easterOkBtn');
 
   // ---- Init ----
   function init() {
@@ -595,23 +598,31 @@
     });
     const repeatBtn = $('#repeatModeBtn');
     if (practiceMode === 'repeat') {
-      if (repeatCount >= 100) {
-        repeatBtn.innerHTML = t('mode.easter_egg', { n: repeatCount });
-        repeatBtn.title = '';
-      } else {
-        repeatBtn.innerHTML = t('mode.repeat') + ' ' + repeatCount;
-        repeatBtn.title = '';
-      }
+      repeatBtn.innerHTML = t('mode.repeat') + ' ' + repeatCount + 'x';
     } else {
       repeatBtn.innerHTML = t('mode.repeat');
     }
   }
+
+  // ---- Easter egg overlay ----
+  function showEasterOverlay(count, glyph) {
+    if (count === 100) {
+      easterMessage.textContent = t('mode.easter_egg_100', { glyph, n: count });
+    } else if (count === 50) {
+      easterMessage.textContent = t('mode.easter_egg_50');
+    }
+    easterOverlay.classList.remove('hidden');
+  }
+  easterOkBtn.addEventListener('click', () => {
+    easterOverlay.classList.add('hidden');
+  });
 
   // ---- Practice tab ----
   function setupPractice() {
     practiceTarget.innerHTML = '';
     quizWriters = {};
     practicePos = 0;
+    easterOverlay.classList.add('hidden');
     loadOutlinePreference();
     loadModePreference();
     repeatRemaining = repeatCount;
@@ -939,15 +950,23 @@
 
     // Practice mode selector
     document.querySelectorAll('.mode-btn').forEach((btn) => btn.addEventListener('click', () => {
-      if (btn.dataset.mode === 'repeat' && btn.dataset.mode === practiceMode) {
+      if (btn.dataset.mode === 'repeat' && practiceMode === 'repeat') {
         // Cycle repeat count
         const opts = [3, 5, 10, 20, 50, 100];
         let idx = opts.indexOf(repeatCount);
         if (idx === -1 || idx >= opts.length - 1) idx = 0; else idx++;
-        repeatCount = opts[idx];
+        const newCount = opts[idx];
+        repeatCount = newCount;
         repeatRemaining = repeatCount;
         saveModePreference();
         updateModeUI();
+
+        // Show easter egg overlay for 50 or 100
+        if (newCount === 50 || newCount === 100) {
+          const ch = currentChars[practicePos] || '';
+          showEasterOverlay(newCount, ch);
+        }
+
         if (currentChars.length) {
           const ch = currentChars[practicePos];
           if (ch) loadPracticeChar();
