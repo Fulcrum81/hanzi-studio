@@ -26,6 +26,9 @@
   let currentNextStroke = 0; // upcoming stroke number (0-based) for hint highlighting
   let outlineVisible = true; // outline contour visibility
   let practiceSize = 0;      // cached canvas size for practice tab (avoids layout-dependent recalc)
+  let practiceMode = 'free';  // 'free' | 'guided' | 'repeat'
+  let repeatCount = 3;        // target repetitions for 'repeat' mode
+  let repeatRemaining = 0;    // remaining repetitions in current set
   let history = [];
   let autoSelected = false;
 
@@ -59,6 +62,9 @@
   const historyChips   = $('#historyChips');
   const autoList       = $('#autocompleteList');
   const langBtns       = document.querySelectorAll('.lang-btn');
+  const easterOverlay  = $('#easterOverlay');
+  const easterMessage  = $('#easterMessage');
+  const easterOkBtn    = $('#easterOkBtn');
 
   // ---- Init ----
   function init() {
@@ -136,6 +142,8 @@
     outlineToggleBtn.classList.toggle('active', outlineVisible);
     // Update lang toggle button
     updateLangToggle();
+    // Update mode UI (translations for repeat counter / easter egg)
+    updateModeUI();
     // Update loop button
     setLoopBtn(isAnimLooping);
     // Update stroke count
@@ -573,12 +581,52 @@
     localStorage.setItem('hanzi-outline', outlineVisible ? 'true' : 'false');
   }
 
+  // ---- Practice mode persistence ----
+  function loadModePreference() {
+    const saved = localStorage.getItem('hanzi-mode');
+    if (saved === 'guided' || saved === 'repeat') practiceMode = saved;
+    const savedCount = localStorage.getItem('hanzi-repeat-count');
+    if (savedCount) repeatCount = parseInt(savedCount, 10) || 3;
+  }
+  function saveModePreference() {
+    localStorage.setItem('hanzi-mode', practiceMode);
+    localStorage.setItem('hanzi-repeat-count', String(repeatCount));
+  }
+  function updateModeUI() {
+    document.querySelectorAll('.mode-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.mode === practiceMode);
+    });
+    const repeatBtn = $('#repeatModeBtn');
+    if (practiceMode === 'repeat') {
+      repeatBtn.innerHTML = t('mode.repeat') + ' ' + repeatCount + 'x';
+    } else {
+      repeatBtn.innerHTML = t('mode.repeat');
+    }
+  }
+
+  // ---- Easter egg overlay ----
+  function showEasterOverlay(count, glyph) {
+    if (count === 100) {
+      easterMessage.textContent = t('mode.easter_egg_100', { glyph, n: count });
+    } else if (count === 50) {
+      easterMessage.textContent = t('mode.easter_egg_50');
+    }
+    easterOverlay.classList.remove('hidden');
+  }
+  easterOkBtn.addEventListener('click', () => {
+    easterOverlay.classList.add('hidden');
+  });
+
   // ---- Practice tab ----
   function setupPractice() {
     practiceTarget.innerHTML = '';
     quizWriters = {};
     practicePos = 0;
+    easterOverlay.classList.add('hidden');
     loadOutlinePreference();
+    loadModePreference();
+    repeatRemaining = repeatCount;
+    updateModeUI();
     practiceSize = Math.min(computePracticeCanvasSize() + 20, 320);
     updatePracticeChrome();
     loadPracticeChar();
@@ -626,6 +674,11 @@
       showOutline: outlineVisible,
       showHintAfterMisses: 3,
       highlightOnComplete: true,
+      ...(practiceMode === 'guided' ? {
+        strokeAnimationSpeed: 0.4,
+        strokeHighlightSpeed: 1.0,
+        strokeFadeDuration: 500,
+      } : {}),
       renderer: 'svg'
     });
     quizWriters[ch] = writer;
@@ -647,23 +700,77 @@
       writer.hideOutline({ duration: 0 });
     }
     currentNextStroke = 0;
-    quizStatus.textContent = t('practice.draw_strokes', { char: ch });
-    quizProgress.textContent = '';
     quizActive = true;
-    writer.quiz({
+
+    // For guided mode, show initial hint immediately
+    if (practiceMode === 'guided') {
+      HanziWriter.loadCharacterData(ch).then((data) => {
+        const total = data.strokes.length;
+        quizStatus.textContent = t('mode.guided_prompt', { num: 1, total });
+        quizProgress.textContent = t('practice.stroke_correct', { num: 1, remaining: total - 1 });
+        writer.highlightStroke(0);
+        // currentNextStroke stays 0 until the user actually draws the first stroke
+      }).catch(() => {
+        quizStatus.textContent = t('practice.draw_strokes', { char: ch });
+      });
+    } else {
+      quizStatus.textContent = t('practice.draw_strokes', { char: ch });
+      if (practiceMode === 'repeat') {
+        quizProgress.textContent = t('mode.repeat_count') + ' ' + repeatRemaining + '/' + repeatCount + 'x';
+      } else {
+        quizProgress.textContent = '';
+      }
+    }
+
+    const quizOpts = {
+      showHintAfterMisses: practiceMode === 'guided' ? 1 : 3,
       onComplete: function (data) {
-        quizStatus.textContent = t('practice.complete', { char: ch });
-        quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
-        quizActive = false;
+        if (practiceMode === 'guided') {
+          quizStatus.textContent = t('practice.complete', { char: ch });
+          quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
+          quizActive = false;
+        } else if (practiceMode === 'repeat') {
+          repeatRemaining--;
+          if (repeatRemaining > 0) {
+            // Re-quiz the same character
+            setTimeout(() => startQuizOnWriter(writer, ch), 600);
+            const label = t('mode.repeat_count') + ' ' + repeatRemaining + '/' + repeatCount + 'x';
+            quizStatus.textContent = label;
+            quizProgress.textContent = t('practice.complete', { char: ch });
+          } else {
+            quizStatus.textContent = t('practice.complete', { char: ch });
+            quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
+            quizActive = false;
+            repeatRemaining = repeatCount; // reset for next time
+          }
+        } else {
+          // Free mode
+          quizStatus.textContent = t('practice.complete', { char: ch });
+          quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
+          quizActive = false;
+        }
       },
       onCorrectStroke: function (data) {
         currentNextStroke = data.strokeNum + 1;
-        quizProgress.textContent = t('practice.stroke_correct', { num: data.strokeNum + 1, remaining: data.strokesRemaining });
+        if (practiceMode === 'guided') {
+          const total = data.strokesRemaining + data.strokeNum + 1;
+          quizStatus.textContent = t('mode.guided_prompt', { num: data.strokeNum + 1, total });
+          quizProgress.textContent = t('practice.stroke_correct', { num: data.strokeNum + 1, remaining: data.strokesRemaining });
+          // Auto-highlight next stroke after a brief pause
+          if (data.strokesRemaining > 0) {
+            setTimeout(() => {
+              writer.highlightStroke(data.strokeNum + 1);
+            }, 350);
+          }
+        } else {
+          quizProgress.textContent = t('practice.stroke_correct', { num: data.strokeNum + 1, remaining: data.strokesRemaining });
+        }
       },
       onMistake: function (data) {
         quizProgress.textContent = t('practice.stroke_mistake', { num: data.strokeNum + 1, mistakes: data.mistakesOnStroke });
       }
-    });
+    };
+    writer.quiz(quizOpts);
   }
 
   function toggleOutline() {
@@ -842,6 +949,43 @@
     showHintBtn.addEventListener('click', showHint);
     prevCharBtn.addEventListener('click', prevChar);
     nextCharBtn.addEventListener('click', nextChar);
+
+    // Practice mode selector
+    document.querySelectorAll('.mode-btn').forEach((btn) => btn.addEventListener('click', () => {
+      if (btn.dataset.mode === 'repeat' && practiceMode === 'repeat') {
+        // Cycle repeat count
+        const opts = [3, 5, 10, 20, 50, 100];
+        let idx = opts.indexOf(repeatCount);
+        if (idx === -1 || idx >= opts.length - 1) idx = 0; else idx++;
+        const newCount = opts[idx];
+        repeatCount = newCount;
+        repeatRemaining = repeatCount;
+        saveModePreference();
+        updateModeUI();
+
+        // Show easter egg overlay for 50 or 100
+        if (newCount === 50 || newCount === 100) {
+          const ch = currentChars[practicePos] || '';
+          showEasterOverlay(newCount, ch);
+        }
+
+        if (currentChars.length) {
+          const ch = currentChars[practicePos];
+          if (ch) loadPracticeChar();
+        }
+      } else if (btn.dataset.mode !== practiceMode) {
+        practiceMode = btn.dataset.mode;
+        if (practiceMode === 'repeat') {
+          repeatRemaining = repeatCount;
+        }
+        saveModePreference();
+        updateModeUI();
+        if (currentChars.length) {
+          const ch = currentChars[practicePos];
+          if (ch) loadPracticeChar();
+        }
+      }
+    }));
 
     // Language switch
     $('#langToggle').addEventListener('click', () => {

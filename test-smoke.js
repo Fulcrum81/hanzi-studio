@@ -72,10 +72,14 @@ function makeElement(id, tag) {
 
 const elements = {};
 function reg(id) {
+  // repeatModeBtn is the same DOM element as modeRepeat
+  if (id === 'repeatModeBtn') {
+    return reg('modeRepeat');
+  }
   if (!elements[id]) {
     elements[id] = makeElement(id);
     // Elements that start hidden in the real HTML
-    if (['resultPanel', 'historyBar', 'charNavigator'].includes(id)) {
+    if (['resultPanel', 'historyBar', 'charNavigator', 'easterOverlay'].includes(id)) {
       elements[id].classList.add('hidden');
     }
     // themeToggle has two SVG children (moon visible, sun hidden)
@@ -87,6 +91,15 @@ function reg(id) {
       sun.className = 'theme-icon-sun hidden';
       elements[id].appendChild(sun);
     }
+    // Mode buttons need data-mode
+    if (id === 'modeFree') elements[id].dataset.mode = 'free';
+    if (id === 'modeGuided') elements[id].dataset.mode = 'guided';
+    if (id === 'modeRepeat') { elements[id].dataset.mode = 'repeat'; elements[id].id = 'repeatModeBtn'; }
+    if (id === 'repeatModeBtn') { /* alias — same as modeRepeat */ }
+    // Speed options need data-speed
+    if (id === 'speedOptFast') elements[id].dataset.speed = 'fast';
+    if (id === 'speedOptMedium') elements[id].dataset.speed = 'medium';
+    if (id === 'speedOptSlow') elements[id].dataset.speed = 'slow';
   }
   return elements[id];
 }
@@ -106,7 +119,8 @@ const documentMock = {
     if (sel === '.tab-btn') return [reg('tabAnimate'), reg('tabPractice')];
     if (sel === '.tab-content') return [reg('tabAnimate'), reg('tabPractice')];
     if (sel === '.lang-btn') return [reg('langEn'), reg('langRu')];
-    if (sel === '.speed-btn') return [];
+    if (sel === '.speed-opt') return [reg('speedOptFast'), reg('speedOptMedium'), reg('speedOptSlow')];
+    if (sel === '.mode-btn') return [reg('modeFree'), reg('modeGuided'), reg('modeRepeat')];
     return [];
   },
   createElement(tag) { return makeElement(null, tag); },
@@ -264,12 +278,10 @@ run('toggle loop', () => {
   reg('loopBtn').click(); // off
 });
 
-// 8. Speed selector (verify the module doesn't crash with empty speed button list)
+// 8. Speed selector
 run('speed selector', () => {
-  // In the mock DOM there are no .speed-btn elements, so the forEach is a no-op.
-  // This test just ensures the code path doesn't throw.
-  const btns = sandbox.document.querySelectorAll('.speed-btn');
-  if (btns.length !== 0) throw new Error('Expected no speed buttons in mock');
+  const btns = sandbox.document.querySelectorAll('.speed-opt');
+  if (btns.length !== 3) throw new Error('Expected 3 speed option buttons, got ' + btns.length);
 });
 
 // 9. Outline toggle
@@ -304,6 +316,32 @@ run('navigate chars in word', () => {
   reg('searchBtn').click();
   reg('nextCharBtn').click();
   reg('prevCharBtn').click();
+});
+
+// 14. Practice mode switching
+run('switch to guided mode', () => {
+  reg('modeGuided').click();
+  if (reg('modeGuided').classList.contains('active') === false) throw new Error('Guided mode should be active');
+});
+run('switch to repeat mode', () => {
+  reg('modeRepeat').click();
+  if (reg('modeRepeat').classList.contains('active') === false) throw new Error('Repeat mode should be active');
+  if (!reg('modeRepeat').innerHTML.includes('3x')) throw new Error('Repeat should show "3x", got: ' + reg('modeRepeat').innerHTML);
+});
+run('cycle repeat count', () => {
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('5x')) throw new Error('Repeat should show "5x", got: ' + reg('modeRepeat').innerHTML);
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('100')) throw new Error('Repeat should show count 100, got: ' + reg('modeRepeat').innerHTML);
+  reg('modeRepeat').click();
+  if (!reg('modeRepeat').innerHTML.includes('3')) throw new Error('Repeat should wrap back to 3, got: ' + reg('modeRepeat').innerHTML);
+});
+run('switch back to free mode', () => {
+  reg('modeFree').click();
+  if (reg('modeFree').classList.contains('active') === false) throw new Error('Free mode should be active');
 });
 
 console.log('\n=== Smoke test results ===');

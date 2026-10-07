@@ -607,6 +607,38 @@ body {
   min-height: 72px;
 }
 
+/* ===== Practice mode selector ===== */
+.mode-selector {
+  display: flex;
+  gap: 2px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  margin-bottom: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  padding: 6px 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.mode-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
 /* Speed container: a square that holds 3 stacked options */
 .speed-container {
   padding: 0;
@@ -646,6 +678,38 @@ body {
 
 .speed-opt:not(.active):hover {
   background: var(--surface-alt);
+}
+
+/* Easter egg overlay */
+.easter-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.easter-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+.easter-box p {
+  font-size: 1rem;
+  line-height: 1.4;
+  margin: 0 0 18px 0;
+  color: var(--text);
+}
+
+.easter-box .primary-btn {
+  padding: 10px 28px;
+  font-size: 0.95rem;
 }
 
 /* ===== Stroke Info ===== */
@@ -853,6 +917,12 @@ body {
   .quiz-status-bar {
     margin-bottom: 6px;
     font-size: 0.8rem;
+  }
+
+  /* Compact mode selector */
+  .mode-btn {
+    font-size: 0.7rem;
+    padding: 5px 4px;
   }
 
   /* Compact char navigator */
