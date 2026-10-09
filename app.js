@@ -65,6 +65,10 @@
   const easterOverlay  = $('#easterOverlay');
   const easterMessage  = $('#easterMessage');
   const easterOkBtn    = $('#easterOkBtn');
+  const helpBtn        = $('#helpBtn');
+  const aboutOverlay   = $('#aboutOverlay');
+  const aboutCloseBtn  = $('#aboutCloseBtn');
+  const aboutDismissBtn= $('#aboutDismissBtn');
 
   // ---- Init ----
   function init() {
@@ -76,6 +80,11 @@
     if (location.hash && location.hash.length > 1) {
       const q = decodeURIComponent(location.hash.slice(1));
       if (q) searchCharacter(q);
+    }
+    // First-launch tutorial
+    if (!localStorage.getItem('hanzi-seen-intro')) {
+      showAboutOverlay();
+      localStorage.setItem('hanzi-seen-intro', '1');
     }
   }
 
@@ -649,6 +658,22 @@
   }
   easterOkBtn.addEventListener('click', () => {
     easterOverlay.classList.add('hidden');
+  });
+
+  // ---- About / Help overlay ----
+  function showAboutOverlay() {
+    // Apply translations inside the overlay since it may not have been visible at init
+    applyTranslations();
+    aboutOverlay.classList.remove('hidden');
+  }
+  function hideAboutOverlay() {
+    aboutOverlay.classList.add('hidden');
+  }
+  helpBtn.addEventListener('click', showAboutOverlay);
+  aboutCloseBtn.addEventListener('click', hideAboutOverlay);
+  aboutDismissBtn.addEventListener('click', hideAboutOverlay);
+  aboutOverlay.addEventListener('click', (e) => {
+    if (e.target === aboutOverlay) hideAboutOverlay();
   });
 
   // ---- Practice tab ----

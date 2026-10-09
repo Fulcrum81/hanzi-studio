@@ -27,6 +27,13 @@
     <div class="app-title">
       <span class="logo-char">字</span>
       <span class="logo-text">Practice Hanzi</span>
+      <button id="helpBtn" class="help-btn" title="About / Help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.5 9.5C9.5 8.11929 10.6193 7 12 7C13.3807 7 14.5 8.11929 14.5 9.5C14.5 10.3569 14.0689 11.1131 13.4117 11.5636C12.7283 12.0319 12 12.6716 12 13.5"></path>
+          <path d="M12.125 16.75H12M12.25 16.75C12.25 16.8881 12.1381 17 12 17C11.8619 17 11.75 16.8881 11.75 16.75C11.75 16.6119 11.8619 16.5 12 16.5C12.1381 16.5 12.25 16.6119 12.25 16.75Z"></path>
+        </svg>
+      </button>
     </div>
     <div class="header-controls">
       <div class="lang-toggle" id="langToggle">
@@ -222,6 +229,28 @@
     <div class="easter-box" id="easterBox">
       <p id="easterMessage"></p>
       <button id="easterOkBtn" class="primary-btn" data-i18n="mode.easter_ok">Yes, let's do it!</button>
+    </div>
+  </div>
+
+  <!-- About / Help overlay -->
+  <div class="easter-overlay hidden" id="aboutOverlay">
+    <div class="about-box" id="aboutBox">
+      <button id="aboutCloseBtn" class="about-close-btn" aria-label="Close">&times;</button>
+      <div class="about-content">
+        <h2 data-i18n="about.title">Practice Hanzi</h2>
+        <p class="about-version" data-i18n="about.version">Version 2.0</p>
+        <p data-i18n="about.desc">Learn Chinese characters with stroke order animations, pinyin, definitions, and hands-on handwriting practice.</p>
+        <hr>
+        <ul class="about-tutorial">
+          <li data-i18n="about.tip_search">Type a character, word, or pinyin in the search box to get started.</li>
+          <li data-i18n="about.tip_tabs">Use the <strong>Stroke Order</strong> tab to watch the animation; the <strong>Practice</strong> tab to write.</li>
+          <li data-i18n="about.tip_speed">Adjust animation speed with the icons below the play button.</li>
+          <li data-i18n="about.tip_modes">In Practice, choose Free, Guided (auto-highlight next stroke), or Repeat (re-quiz N times).</li>
+          <li data-i18n="about.tip_lang">Toggle EN / RU in the top bar to switch language.</li>
+          <li data-i18n="about.tip_theme">Tap the moon/sun icon to switch dark/light theme.</li>
+        </ul>
+        <button id="aboutDismissBtn" class="primary-btn" data-i18n="about.got_it">Got it!</button>
+      </div>
     </div>
   </div>
 

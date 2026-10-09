@@ -55,6 +55,16 @@ const LOCALES = {
     'lang.switch':              'Language',
     'lang.en':                  'EN',
     'lang.ru':                  'RU',
+    'about.title':              'Practice Hanzi',
+    'about.version':            'Version 2.0',
+    'about.desc':               'Learn Chinese characters with stroke order animations, pinyin, definitions, and hands-on handwriting practice.',
+    'about.tip_search':         'Type a Chinese character, word, or pinyin in the search box to get started.',
+    'about.tip_tabs':           'Use the <strong>Stroke Order</strong> tab to watch the animation; the <strong>Practice</strong> tab to write.',
+    'about.tip_speed':          'Adjust animation speed with the icons below the play button.',
+    'about.tip_modes':          'In Practice, choose Free, Guided (auto-highlight next stroke), or Repeat (re-quiz N times).',
+    'about.tip_lang':           'Toggle EN / RU in the top bar to switch language.',
+    'about.tip_theme':          'Tap the moon/sun icon to switch dark/light theme.',
+    'about.got_it':             'Got it!',
   },
 
   ru: {
@@ -107,6 +117,16 @@ const LOCALES = {
     'lang.switch':              '\u042f\u0437\u044b\u043a',
     'lang.en':                  'EN',
     'lang.ru':                  'RU',
+    'about.title':              'Practice Hanzi',
+    'about.version':            '\u0412\u0435\u0440\u0441\u0438\u044f 2.0',
+    'about.desc':               '\u0418\u0437\u0443\u0447\u0430\u0439\u0442\u0435 \u043a\u0438\u0442\u0430\u0439\u0441\u043a\u0438\u0435 \u0438\u0435\u0440\u043e\u0433\u043b\u0438\u0444\u044b \u0441 \u0430\u043d\u0438\u043c\u0430\u0446\u0438\u0435\u0439 \u043f\u043e\u0440\u044f\u0434\u043a\u0430 \u0447\u0435\u0440\u0442, \u043f\u0438\u043d\u044c\u0438\u043d\u0435\u043c, \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f\u043c\u0438 \u0438 \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u043e\u0439 \u043d\u0430\u043f\u0438\u0441\u0430\u043d\u0438\u044f.',
+    'about.tip_search':         '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u0435\u0440\u043e\u0433\u043b\u0438\u0444, \u0441\u043b\u043e\u0432\u043e \u0438\u043b\u0438 \u043f\u0438\u043d\u044c\u0438\u043d\u044c \u0432 \u043f\u043e\u0438\u0441\u043a\u043e\u0432\u0443\u044e \u0441\u0442\u0440\u043e\u043a\u0443.',
+    'about.tip_tabs':           '\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u0432\u043a\u043b\u0430\u0434\u043a\u0443 <strong>\u041f\u043e\u0440\u044f\u0434\u043e\u043a \u0447\u0435\u0440\u0442</strong> \u0434\u043b\u044f \u0430\u043d\u0438\u043c\u0430\u0446\u0438\u0438, \u0430 <strong>\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430</strong> \u0434\u043b\u044f \u043d\u0430\u043f\u0438\u0441\u0430\u043d\u0438\u044f.',
+    'about.tip_speed':          '\u0418\u0437\u043c\u0435\u043d\u044f\u0439\u0442\u0435 \u0441\u043a\u043e\u0440\u043e\u0441\u0442\u044c \u0430\u043d\u0438\u043c\u0430\u0446\u0438\u0438 \u0438\u043a\u043e\u043d\u043a\u0430\u043c\u0438 \u043f\u043e\u0434 \u043a\u043d\u043e\u043f\u043a\u043e\u0439 \u0432\u043e\u0441\u043f\u0440\u043e\u0438\u0437\u0432\u0435\u0434\u0435\u043d\u0438\u044f.',
+    'about.tip_modes':          '\u0412 \u0440\u0435\u0436\u0438\u043c\u0435 \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0421\u0432\u043e\u0431\u043e\u0434\u043d\u044b\u0439, \u0421 \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043a\u043e\u0439 (\u0430\u0432\u0442\u043e\u043f\u043e\u0434\u0441\u0432\u0435\u0442\u043a\u0430) \u0438\u043b\u0438 \u041f\u043e\u0432\u0442\u043e\u0440 (\u043f\u043e\u0432\u0442\u043e\u0440\u0438\u0442\u044c N \u0440\u0430\u0437).',
+    'about.tip_lang':           '\u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0430\u0439\u0442\u0435 EN / RU \u0432 \u0432\u0435\u0440\u0445\u043d\u0435\u0439 \u043f\u0430\u043d\u0435\u043b\u0438.',
+    'about.tip_theme':          '\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0438\u043a\u043e\u043d\u043a\u0443 \u043b\u0443\u043d\u044b/\u0441\u043e\u043b\u043d\u0446\u0430 \u0434\u043b\u044f \u0441\u043c\u0435\u043d\u044b \u0442\u0435\u043c\u044b.',
+    'about.got_it':             '\u041f\u043e\u043d\u044f\u0442\u043d\u043e!',
   }
 };
 
