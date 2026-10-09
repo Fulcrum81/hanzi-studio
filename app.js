@@ -280,6 +280,31 @@
     return entry ? { char: ch, pinyin: entry[0], definition: entry[1] } : null;
   }
 
+  // Search by Russian definition text (in RU_DICT) — falls back to English/pinyin via lookupHanzi
+  function lookupByText(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) return null;
+
+    // If language is Russian, search RU_DICT definitions first
+    if (currentLang === 'ru') {
+      const ruMatches = Object.keys(RU_DICT).filter((ch) =>
+        RU_DICT[ch][1].toLowerCase().includes(q)
+      );
+      if (ruMatches.length > 0) {
+        // Prefer an exact definition match, then words (multi-char) over single chars
+        const exact = ruMatches.filter((ch) => {
+          const def = RU_DICT[ch][1].toLowerCase();
+          return def === q || def.indexOf(q) === 0;
+        });
+        const pool = exact.length > 0 ? exact : ruMatches;
+        const ch = pool.sort((a, b) => b.length - a.length)[0];
+        return { char: ch, pinyin: RU_DICT[ch][0], definition: RU_DICT[ch][1] };
+      }
+    }
+    // Fall back to English/pinyin search
+    return lookupHanzi(query);
+  }
+
   // ---- Pinyin autocomplete ----
   function showAutocomplete() {
     const val = input.value.trim();
@@ -321,7 +346,7 @@
     let fullInfo = null;
 
     if (chars.length === 0) {
-      fullInfo = lookupHanzi(query);
+      fullInfo = lookupByText(query);
       if (fullInfo) {
         input.value = fullInfo.char;
         query = fullInfo.char;

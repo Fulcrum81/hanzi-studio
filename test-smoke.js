@@ -262,6 +262,23 @@ run('search English "love"', () => {
   if (reg('infoHanzi').textContent !== '爱') throw new Error('infoHanzi should be 爱, got ' + reg('infoHanzi').textContent);
 });
 
+// 3b. Search by Russian word (RU mode)
+run('search Russian "китай"', () => {
+  vm.runInContext('switchLanguage("ru")', sandbox);
+  reg('charInput').value = 'китай';
+  reg('searchBtn').click();
+  if (reg('infoHanzi').textContent !== '中国') throw new Error('RU search китай should find 中国, got ' + reg('infoHanzi').textContent);
+  if (!reg('infoDefinition').textContent.includes('Китай')) throw new Error('definition should be Китай, got ' + reg('infoDefinition').textContent);
+  vm.runInContext('switchLanguage("en")', sandbox);
+});
+run('search Russian "яблоко"', () => {
+  vm.runInContext('switchLanguage("ru")', sandbox);
+  reg('charInput').value = 'яблоко';
+  reg('searchBtn').click();
+  if (reg('infoHanzi').textContent !== '苹果') throw new Error('RU search яблоко should find 苹果, got ' + reg('infoHanzi').textContent);
+  vm.runInContext('switchLanguage("en")', sandbox);
+});
+
 // 4. Random
 run('random character', () => {
   reg('randomBtn').click();
