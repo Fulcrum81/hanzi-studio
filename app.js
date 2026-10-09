@@ -332,8 +332,10 @@
       }
     } else {
       currentChars = chars;
-      fullInfo = HANZI_DICT[query]
-        ? { char: query, pinyin: HANZI_DICT[query][0], definition: HANZI_DICT[query][1] }
+      // Word-level lookup: prefer Russian definition when language is RU
+      const wordDict = currentLang === 'ru' && RU_DICT[query] ? RU_DICT : HANZI_DICT;
+      fullInfo = wordDict[query]
+        ? { char: query, pinyin: wordDict[query][0], definition: wordDict[query][1] }
         : null;
     }
 

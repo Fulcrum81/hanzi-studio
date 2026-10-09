@@ -126,6 +126,7 @@ const documentMock = {
   createElement(tag) { return makeElement(null, tag); },
   createElementNS() { return makeElement(null, 'svg'); },
   addEventListener() {},
+  dispatchEvent() {},
   getElementById(id) { return reg(id); },
 };
 
@@ -242,6 +243,16 @@ run('search multi-char 中国', () => {
   reg('charInput').value = '中国';
   reg('searchBtn').click();
   if (reg('infoHanzi').textContent !== '中国') throw new Error('infoHanzi should be 中国');
+});
+
+// 2b. RU mode: word-level definition should come from RU_DICT
+run('RU word lookup shows Russian definition', () => {
+  vm.runInContext('switchLanguage("ru")', sandbox);
+  reg('charInput').value = '中国';
+  reg('searchBtn').click();
+  const def = reg('infoDefinition').textContent;
+  if (!def.includes('Китай')) throw new Error('RU definition should contain Китай, got: ' + def);
+  vm.runInContext('switchLanguage("en")', sandbox);
 });
 
 // 3. Search by English
