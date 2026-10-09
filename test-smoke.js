@@ -263,7 +263,7 @@ run('search English "love"', () => {
 });
 
 // 3b. Search by Russian word (RU mode)
-run('search Russian "китай"', () => {
+run('search Russian "китай" (RU mode)', () => {
   vm.runInContext('switchLanguage("ru")', sandbox);
   reg('charInput').value = 'китай';
   reg('searchBtn').click();
@@ -271,12 +271,20 @@ run('search Russian "китай"', () => {
   if (!reg('infoDefinition').textContent.includes('Китай')) throw new Error('definition should be Китай, got ' + reg('infoDefinition').textContent);
   vm.runInContext('switchLanguage("en")', sandbox);
 });
-run('search Russian "яблоко"', () => {
+run('search Russian "яблоко" (RU mode)', () => {
   vm.runInContext('switchLanguage("ru")', sandbox);
   reg('charInput').value = 'яблоко';
   reg('searchBtn').click();
   if (reg('infoHanzi').textContent !== '苹果') throw new Error('RU search яблоко should find 苹果, got ' + reg('infoHanzi').textContent);
   vm.runInContext('switchLanguage("en")', sandbox);
+});
+// 3c. Search by Russian word while app is in English mode (cross-language)
+run('search Russian "Китай" (EN mode)', () => {
+  vm.runInContext('switchLanguage("en")', sandbox);
+  reg('charInput').value = 'Китай';
+  reg('searchBtn').click();
+  if (reg('infoHanzi').textContent !== '中国') throw new Error('EN mode RU search Китай should find 中国, got ' + reg('infoHanzi').textContent);
+  if (!reg('infoDefinition').textContent.includes('China')) throw new Error('definition should be English in EN mode, got ' + reg('infoDefinition').textContent);
 });
 
 // 4. Random

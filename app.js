@@ -280,13 +280,16 @@
     return entry ? { char: ch, pinyin: entry[0], definition: entry[1] } : null;
   }
 
-  // Search by Russian definition text (in RU_DICT) — falls back to English/pinyin via lookupHanzi
+  // Search by Russian definition text (in RU_DICT) or English/pinyin via lookupHanzi.
+  // Works in any language mode; RU_DICT is only consulted when the query
+  // contains a Cyrillic character, to avoid Latin/pinyin cross-contamination.
   function lookupByText(query) {
     const q = query.trim().toLowerCase();
     if (!q) return null;
 
-    // If language is Russian, search RU_DICT definitions first
-    if (currentLang === 'ru') {
+    // Only search RU_DICT when the query contains Cyrillic text
+    // (RU_DICT definitions may embed Latin pinyin, so never match Latin queries against them)
+    if (/[\u0400-\u04FF\u0500-\u052F]/.test(q)) {
       const ruMatches = Object.keys(RU_DICT).filter((ch) =>
         RU_DICT[ch][1].toLowerCase().includes(q)
       );
@@ -298,7 +301,11 @@
         });
         const pool = exact.length > 0 ? exact : ruMatches;
         const ch = pool.sort((a, b) => b.length - a.length)[0];
-        return { char: ch, pinyin: RU_DICT[ch][0], definition: RU_DICT[ch][1] };
+        // Show definition in the active language
+        const dict = currentLang === 'ru' ? RU_DICT : HANZI_DICT;
+        const pinyin = RU_DICT[ch][0];
+        const def = dict[ch] ? dict[ch][1] : RU_DICT[ch][1];
+        return { char: ch, pinyin, definition: def };
       }
     }
     // Fall back to English/pinyin search
