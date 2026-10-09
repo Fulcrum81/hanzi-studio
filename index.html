@@ -238,7 +238,8 @@
       <button id="aboutCloseBtn" class="about-close-btn" aria-label="Close">&times;</button>
       <div class="about-content">
         <h2 data-i18n="about.title">Practice Hanzi</h2>
-        <p class="about-version" data-i18n="about.version">Version 2.0</p>
+        <p class="about-version"><span data-i18n="about.version">Version</span> <span id="aboutVersion"></span></p>
+        <p class="about-credit" data-i18n="about.credit">Created by Vadim Zubovich and his friend DeepSeek</p>
         <p data-i18n="about.desc">Learn Chinese characters with stroke order animations, pinyin, definitions, and hands-on handwriting practice.</p>
         <hr>
         <ul class="about-tutorial">
@@ -248,6 +249,7 @@
           <li data-i18n="about.tip_modes">In Practice, choose Free, Guided (auto-highlight next stroke), or Repeat (re-quiz N times).</li>
           <li data-i18n="about.tip_lang">Toggle EN / RU in the top bar to switch language.</li>
           <li data-i18n="about.tip_theme">Tap the moon/sun icon to switch dark/light theme.</li>
+          <li data-i18n="about.tip_pwa">This is a Progressive Web App — install it to your home screen for offline use!</li>
         </ul>
         <button id="aboutDismissBtn" class="primary-btn" data-i18n="about.got_it">Got it!</button>
       </div>
@@ -261,6 +263,7 @@
 
   <script src="app.js"></script>
   <script>
+    const APP_VERSION = 6;
     // Register service worker for PWA offline support
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {

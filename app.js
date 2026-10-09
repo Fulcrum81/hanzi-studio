@@ -69,6 +69,7 @@
   const aboutOverlay   = $('#aboutOverlay');
   const aboutCloseBtn  = $('#aboutCloseBtn');
   const aboutDismissBtn= $('#aboutDismissBtn');
+  const aboutVersion   = $('#aboutVersion');
 
   // ---- Init ----
   function init() {
@@ -662,6 +663,8 @@
 
   // ---- About / Help overlay ----
   function showAboutOverlay() {
+    // Set version from the global constant (defined in index.html)
+    aboutVersion.textContent = typeof APP_VERSION !== 'undefined' ? APP_VERSION : '?';
     // Apply translations inside the overlay since it may not have been visible at init
     applyTranslations();
     aboutOverlay.classList.remove('hidden');

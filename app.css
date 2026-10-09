@@ -776,6 +776,12 @@ body {
 .about-version {
   font-size: 0.8rem;
   color: var(--text-muted);
+  margin: 0 0 2px 0;
+}
+
+.about-credit {
+  font-size: 0.8rem;
+  color: var(--text-muted);
   margin: 0 0 12px 0;
 }
 
