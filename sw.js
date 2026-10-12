@@ -4,7 +4,7 @@
    ============================================================ */
 
 // Increment this version on every deploy to force a fresh SW install
-const CACHE_NAME = 'practice-hanzi-v8';
+const CACHE_NAME = 'practice-hanzi-v9';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -50,45 +50,59 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: cache-first for app shell; network-first for Hanzi Writer character data
+// Fetch: network-first for HTML navigations (always get the latest app shell when
+// online, fall back to cache offline); scoped cache-first for everything else.
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // Cross-origin: Hanzi Writer char data from jsdelivr CDN
   if (url.origin === CHAR_DATA_ORIGIN) {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          if (response && response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        });
-      })
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(event.request).then((cached) => {
+          if (cached) return cached;
+          return fetch(event.request).then((response) => {
+            if (response && response.ok) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          });
+        })
+      )
     );
     return;
   }
 
-  // Same-origin: cache-first (app shell + dictionary)
+  // Navigations: network-first (fresh shell), cache fallback when offline
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response && response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', clone));
+        }
+        return response;
+      }).catch(() =>
+        caches.open(CACHE_NAME).then((cache) => cache.match('./index.html'))
+      )
+    );
+    return;
+  }
+
+  // Same-origin static assets: cache-first, scoped to the current cache version
   if (event.request.method === 'GET') {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          if (response && response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        }).catch(() => {
-          // Offline fallback: try cached index
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
-      })
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(event.request).then((cached) => {
+          if (cached) return cached;
+          return fetch(event.request).then((response) => {
+            if (response && response.ok) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          });
+        })
+      )
     );
   }
 });
