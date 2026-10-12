@@ -32,6 +32,28 @@
   let history = [];
   let autoSelected = false;
 
+  // Learn mode state (20 repetitions across 4 phases)
+  const LEARN_PHASES = [
+    { guided: true,  outline: true  },
+    { guided: true,  outline: false },
+    { guided: false, outline: true  },
+    { guided: false, outline: false },
+  ];
+  let learnActive = false;
+  let learnPhaseIndex = 0;   // 0..3
+  let learnRepIndex = 0;     // 0..4 (5 reps per phase)
+  let learnNextStroke = 0;   // next stroke number for guided highlight
+  let learnWriter = null;    // current HanziWriter instance in learn overlay
+  let learnDoneWriter = null; // display writer on the congrats screen
+  let learnHintTimer = null;  // auto-dismiss timer for the first-use hint
+
+  // ---- Analytics ----
+  function track(eventName, params) {
+    if (typeof gtag === 'function' && window.GA_MEASUREMENT_ID) {
+      try { gtag('event', eventName, params || {}); } catch (e) { /* never break the app */ }
+    }
+  }
+
   // ---- DOM references ----
   const $ = (sel) => document.querySelector(sel);
   const input          = $('#charInput');
@@ -70,6 +92,20 @@
   const aboutCloseBtn  = $('#aboutCloseBtn');
   const aboutDismissBtn= $('#aboutDismissBtn');
   const aboutVersion   = $('#aboutVersion');
+  const learnBtn       = $('#learnBtn');
+  const learnHint      = $('#learnHint');
+  const learnOverlay   = $('#learnOverlay');
+  const learnBox       = $('#learnBox');
+  const learnOverlayChar = $('#learnOverlayChar');
+  const learnPhase     = $('#learnPhase');
+  const learnProgressBar = $('#learnProgressBar');
+  const learnProgressFill = $('#learnProgressFill');
+  const learnStatus    = $('#learnStatus');
+  const learnCanvasTarget = $('#learnCanvasTarget');
+  const learnDone      = $('#learnDone');
+  const learnDoneChar  = $('#learnDoneChar');
+  const learnDoneInfo  = $('#learnDoneInfo');
+  const learnCloseBtn  = $('#learnCloseBtn');
 
   // ---- Init ----
   function init() {
@@ -115,6 +151,7 @@
       localStorage.setItem('hanzi-theme', 'dark');
       setThemeIcons(true);
     }
+    track('theme_toggle', { theme: isDark ? 'light' : 'dark' });
     // Refresh practice canvas to apply new drawing / stroke / outline colors
     if (currentChars.length) {
       loadPracticeChar();
@@ -166,6 +203,256 @@
     }
     // Reset active lang button
     langBtns.forEach((btn) => btn.classList.toggle('active', btn.dataset.lang === currentLang));
+  }
+
+  // ---- Learn mode ----
+  function startLearnMode(ch) {
+    if (!ch) return;
+    track('learn_start', { char: ch, lang: currentLang });
+    learnActive = true;
+    learnPhaseIndex = 0;
+    learnRepIndex = 0;
+    learnNextStroke = 0;
+    learnWriter = null;
+    learnDoneWriter = null;
+
+    learnOverlayChar.textContent = ch;
+    learnCanvasTarget.innerHTML = '';
+    learnBox.classList.remove('done');
+    learnDone.classList.add('hidden');
+
+    learnOverlay.classList.remove('hidden');
+    startLearnRepetition(ch);
+  }
+
+  function startLearnRepetition(ch) {
+    if (!ch) return;
+    const phase = LEARN_PHASES[learnPhaseIndex];
+    const totalReps = 5;
+
+    // Build phase label
+    const phaseKey = phase.guided
+      ? (phase.outline ? 'learn.phase_guided_outline' : 'learn.phase_guided_no_outline')
+      : (phase.outline ? 'learn.phase_free_outline' : 'learn.phase_free_no_outline');
+    learnPhase.textContent = t(phaseKey, { n: learnRepIndex + 1 });
+
+    // Update progress bar
+    const done = learnPhaseIndex * totalReps + learnRepIndex;
+    const total = LEARN_PHASES.length * totalReps;
+    learnProgressFill.style.width = (done / total * 100) + '%';
+
+    learnCanvasTarget.innerHTML = '';
+
+    const size = Math.min(window.innerWidth - 80, 320);
+    const pad = 8;
+
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.width = size + 'px';
+    wrapper.style.height = size + 'px';
+    wrapper.style.margin = '0 auto';
+    learnCanvasTarget.appendChild(wrapper);
+
+    // Grid
+    const gridSvg = createGridSvg(size, size, pad);
+    gridSvg.style.position = 'absolute';
+    gridSvg.style.top = '0';
+    gridSvg.style.left = '0';
+    gridSvg.style.pointerEvents = 'none';
+    wrapper.appendChild(gridSvg);
+
+    const hwDiv = document.createElement('div');
+    hwDiv.style.width = size + 'px';
+    hwDiv.style.height = size + 'px';
+    wrapper.appendChild(hwDiv);
+
+    const writer = HanziWriter.create(hwDiv, ch, {
+      width: size,
+      height: size,
+      padding: pad,
+      strokeColor: isDarkTheme() ? '#e0e0ee' : '#555',
+      radicalColor: '#e74c3c',
+      outlineColor: isDarkTheme() ? '#666' : '#ccc',
+      drawingColor: drawingColor(),
+      drawingWidth: 5,
+      showCharacter: false,
+      showOutline: phase.outline,
+      showHintAfterMisses: phase.guided ? 1 : 3,
+      highlightOnComplete: true,
+      ...(phase.guided ? {
+        strokeAnimationSpeed: 0.4,
+        strokeHighlightSpeed: 1.0,
+        strokeFadeDuration: 500,
+      } : {}),
+      renderer: 'svg',
+    });
+    learnWriter = writer;
+
+    learnStatus.textContent = t('learn.status');
+
+    // Start quiz
+    writer.cancelQuiz();
+    writer.hideCharacter({ duration: 0 });
+    if (phase.outline) {
+      writer.showOutline({ duration: 0 });
+    } else {
+      writer.hideOutline({ duration: 0 });
+    }
+    learnNextStroke = 0;
+
+    if (phase.guided) {
+      HanziWriter.loadCharacterData(ch).then((data) => {
+        const total = data.strokes.length;
+        learnStatus.textContent = t('learn.guided_prompt', { num: 1, total });
+        writer.highlightStroke(0);
+      }).catch(() => {
+        learnStatus.textContent = t('learn.status');
+      });
+    }
+
+    writer.quiz({
+      showHintAfterMisses: phase.guided ? 1 : 3,
+      onComplete: function (data) {
+        if (data.totalMistakes === 0) {
+          learnStatus.textContent = t('learn.perfect');
+        } else {
+          learnStatus.textContent = t('learn.mistakes', { n: data.totalMistakes });
+        }
+
+        // Advance to next repetition or phase
+        learnRepIndex++;
+        if (learnRepIndex >= 5) {
+          learnRepIndex = 0;
+          learnPhaseIndex++;
+          if (learnPhaseIndex >= LEARN_PHASES.length) {
+            // All done
+            showLearnDone(ch);
+            return;
+          }
+        }
+
+        // Progress bar update after short delay
+        setTimeout(() => {
+          const doneTotal = learnPhaseIndex * 5 + learnRepIndex;
+          learnProgressFill.style.width = (doneTotal / (LEARN_PHASES.length * 5) * 100) + '%';
+        }, 100);
+
+        setTimeout(() => {
+          if (learnActive) startLearnRepetition(ch);
+        }, 700);
+      },
+      onCorrectStroke: function (data) {
+        learnNextStroke = data.strokeNum + 1;
+        const phase_ = LEARN_PHASES[learnPhaseIndex];
+        if (phase_.guided) {
+          const total = data.strokesRemaining + data.strokeNum + 1;
+          learnStatus.textContent = t('learn.guided_prompt', { num: data.strokeNum + 1, total });
+          if (data.strokesRemaining > 0) {
+            setTimeout(() => {
+              if (learnActive && learnWriter) learnWriter.highlightStroke(data.strokeNum + 1);
+            }, 350);
+          }
+        } else {
+          learnStatus.textContent = t('learn.stroke_correct', { num: data.strokeNum + 1, remaining: data.strokesRemaining });
+        }
+      },
+      onMistake: function (data) {
+        learnStatus.textContent = t('learn.stroke_mistake', { num: data.strokeNum + 1, mistakes: data.mistakesOnStroke });
+      }
+    });
+  }
+
+  function showLearnDone(ch) {
+    learnActive = false;
+    track('learn_complete', { char: ch, lang: currentLang });
+    learnStatus.textContent = '';
+    if (learnWriter) {
+      learnWriter.cancelQuiz();
+      learnWriter = null;
+    }
+    learnDoneChar.textContent = '';
+    learnCanvasTarget.innerHTML = '';
+    learnProgressFill.style.width = '100%';
+
+    // Draw the learned glyph (animated) in the canvas box
+    learnDoneWriter = createCongratsWriter(learnCanvasTarget, ch);
+
+    // Show congrats
+    learnBox.classList.add('done');
+    learnDone.classList.remove('hidden');
+    // Play the glyph animation once (works whether or not it's visible yet)
+    setTimeout(() => {
+      if (learnDoneWriter) learnDoneWriter.animateCharacter({});
+    }, 150);
+    const info = lookupChar(ch);
+    if (info) {
+      learnDoneInfo.textContent = `[${info.pinyin}] — ${info.definition}`;
+    } else {
+      learnDoneInfo.textContent = ch;
+    }
+  }
+
+  // Compact display writer for the congratulations screen (no grid, auto-plays)
+  function createCongratsWriter(container, ch) {
+    const size = Math.min(window.innerWidth - 140, 220);
+    const pad = 0; // no grid on the congrats screen
+    const hwDiv = document.createElement('div');
+    hwDiv.style.width = size + 'px';
+    hwDiv.style.height = size + 'px';
+    hwDiv.style.margin = '0 auto';
+    container.innerHTML = '';
+    container.appendChild(hwDiv);
+
+    const writer = HanziWriter.create(hwDiv, ch, {
+      width: size,
+      height: size,
+      padding: pad,
+      strokeColor: isDarkTheme() ? '#e0e0ee' : '#4a6cf7',
+      radicalColor: '#e74c3c',
+      showCharacter: true,
+      showOutline: true,
+      strokeAnimationSpeed: 1.2,
+      delayBetweenStrokes: 180,
+      renderer: 'svg',
+    });
+    return writer;
+  }
+
+  function closeLearnMode() {
+    learnActive = false;
+    learnOverlay.classList.add('hidden');
+    if (learnWriter) {
+      learnWriter.cancelQuiz();
+      learnWriter = null;
+    }
+    if (learnDoneWriter) {
+      learnDoneWriter = null;
+    }
+    learnBox.classList.remove('done');
+    learnCanvasTarget.innerHTML = '';
+    learnPhaseIndex = 0;
+    learnRepIndex = 0;
+  }
+
+  // ---- First-use hint for the Learn button ----
+  function maybeShowLearnHint() {
+    // Only for single characters, and only once per user
+    if (learnBtn.classList.contains('hidden')) return;
+    if (localStorage.getItem('hanzi-seen-learn-hint')) return;
+
+    learnBtn.classList.add('pulse');
+    learnHint.classList.remove('hidden');
+    track('learn_hint_shown', {});
+
+    if (learnHintTimer) clearTimeout(learnHintTimer);
+    learnHintTimer = setTimeout(dismissLearnHint, 6000);
+  }
+
+  function dismissLearnHint() {
+    if (learnHintTimer) { clearTimeout(learnHintTimer); learnHintTimer = null; }
+    learnBtn.classList.remove('pulse');
+    learnHint.classList.add('hidden');
+    localStorage.setItem('hanzi-seen-learn-hint', '1');
   }
 
   // ---- Grid color helpers ----
@@ -389,6 +676,8 @@
     currentQuery = query;
     try { location.hash = encodeURIComponent(query); } catch (e) { /* ignore */ }
 
+    track('search', { query: query, chars: currentChars.length, lang: currentLang });
+
     splash.classList.add('hidden');
     resultPanel.classList.remove('hidden');
 
@@ -444,6 +733,10 @@
         .join('');
     }
     infoRadical.textContent = '';
+    // Learn button is only for single characters
+    learnBtn.classList.toggle('hidden', currentChars.length !== 1);
+    // First time a single char is searched, highlight the Learn button
+    maybeShowLearnHint();
   }
 
   // ---- Sizing ----
@@ -679,6 +972,16 @@
     if (e.target === aboutOverlay) hideAboutOverlay();
   });
 
+  learnBtn.addEventListener('click', () => {
+    dismissLearnHint();
+    const ch = currentChars.length === 1 ? currentChars[0] : null;
+    if (ch) startLearnMode(ch);
+  });
+  learnCloseBtn.addEventListener('click', closeLearnMode);
+  learnOverlay.addEventListener('click', (e) => {
+    if (e.target === learnOverlay && !learnActive) closeLearnMode();
+  });
+
   // ---- Practice tab ----
   function setupPractice() {
     practiceTarget.innerHTML = '';
@@ -791,6 +1094,7 @@
           quizStatus.textContent = t('practice.complete', { char: ch });
           quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
           quizActive = false;
+          track('practice_complete', { char: ch, mode: 'guided', mistakes: data.totalMistakes, perfect: data.totalMistakes === 0 });
         } else if (practiceMode === 'repeat') {
           repeatRemaining--;
           if (repeatRemaining > 0) {
@@ -804,12 +1108,14 @@
             quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
             quizActive = false;
             repeatRemaining = repeatCount; // reset for next time
+            track('practice_complete', { char: ch, mode: 'repeat', reps: repeatCount, mistakes: data.totalMistakes, perfect: data.totalMistakes === 0 });
           }
         } else {
           // Free mode
           quizStatus.textContent = t('practice.complete', { char: ch });
           quizProgress.textContent = data.totalMistakes === 0 ? t('practice.perfect') : t('practice.mistakes', { n: data.totalMistakes });
           quizActive = false;
+          track('practice_complete', { char: ch, mode: 'free', mistakes: data.totalMistakes, perfect: data.totalMistakes === 0 });
         }
       },
       onCorrectStroke: function (data) {
@@ -952,6 +1258,7 @@
     if (keys.length === 0) return;
     const randomChar = keys[Math.floor(Math.random() * keys.length)];
     input.value = randomChar;
+    track('random_char', { char: randomChar });
     searchCharacter(randomChar);
   }
 
@@ -1054,6 +1361,7 @@
       const next = currentLang === 'en' ? 'ru' : 'en';
       switchLanguage(next);
       updateLangToggle();
+      track('lang_toggle', { lang: next });
       onLangChange();
     });
     // Listen for langchange event from i18n.js (in case it's triggered programmatically)
