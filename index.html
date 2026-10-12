@@ -321,11 +321,13 @@
 
   <script src="app.js"></script>
   <script>
-    const APP_VERSION = 8;
+    const APP_VERSION = 9;
     // Register service worker for PWA offline support
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        // updateViaCache: 'none' — always re-check sw.js from the network on updates,
+        // so phones reliably pick up new versions instead of serving a stale SW.
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(function (reg) {
           console.log('Practice Hanzi SW registered:', reg.scope);
         }).catch(function (err) {
           console.warn('SW registration failed:', err);
