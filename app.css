@@ -1227,6 +1227,20 @@ body {
     font-size: 0.85rem;
     margin-bottom: 4px;
   }
+  /* Keep character and buttons on one line; shrink character to fit */
+  .info-character {
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .info-hanzi {
+    font-size: 1.5rem;
+  }
+  .info-pinyin {
+    font-size: 0.95rem;
+  }
+  .learn-btn-wrap {
+    flex-shrink: 0;
+  }
 
   /* Compact tab bar */
   .tab-bar {
