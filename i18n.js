@@ -81,6 +81,12 @@ const LOCALES = {
     'learn.stroke_mistake':     'Stroke {num} ✗ #{mistakes}',
     'learn.perfect':            'Perfect — 0 mistakes!',
     'learn.mistakes':           'Mistakes: {n}',
+    'collection.btn':           'My Collection',
+    'collection.empty':         'Your collection is empty — tap + to add characters',
+    'collection.title':         'My Collection',
+    'collection.add':           'Add to Collection',
+    'collection.remove':        'Remove from collection?',
+    'collection.learned':       'Learned: {n}x',
   },
 
   ru: {
@@ -159,6 +165,12 @@ const LOCALES = {
     'learn.stroke_mistake':     '\u0427\u0435\u0440\u0442\u0430 {num} \u2717 #{mistakes}',
     'learn.perfect':            '\u041e\u0442\u043b\u0438\u0447\u043d\u043e \u2014 0 \u043e\u0448\u0438\u0431\u043e\u043a!',
     'learn.mistakes':           '\u041e\u0448\u0438\u0431\u043a\u0438: {n}',
+    'collection.btn':           '\u041c\u043e\u044f \u043a\u043e\u043b\u043b\u0435\u043a\u0446\u0438\u044f',
+    'collection.empty':         '\u041a\u043e\u043b\u043b\u0435\u043a\u0446\u0438\u044f \u043f\u0443\u0441\u0442\u0430 \u2014 \u043d\u0430\u0436\u043c\u0438\u0442\u0435 + \u0447\u0442\u043e\u0431\u044b \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0438\u0435\u0440\u043e\u0433\u043b\u0438\u0444\u044b',
+    'collection.title':         '\u041c\u043e\u044f \u043a\u043e\u043b\u043b\u0435\u043a\u0446\u0438\u044f',
+    'collection.add':           '\u0412 \u043a\u043e\u043b\u043b\u0435\u043a\u0446\u0438\u044e',
+    'collection.remove':        '\u0423\u0431\u0440\u0430\u0442\u044c \u0438\u0437 \u043a\u043e\u043b\u043b\u0435\u043a\u0446\u0438\u0438?',
+    'collection.learned':       '\u0418\u0437\u0443\u0447\u0435\u043d\u043e: {n}x',
   }
 };
 

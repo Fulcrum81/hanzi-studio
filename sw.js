@@ -4,7 +4,7 @@
    ============================================================ */
 
 // Increment this version on every deploy to force a fresh SW install
-const CACHE_NAME = 'practice-hanzi-v9';
+const CACHE_NAME = 'practice-hanzi-v10';
 const CORE_ASSETS = [
   './',
   './index.html',

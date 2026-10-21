@@ -29,14 +29,18 @@
   let practiceMode = 'free';  // 'free' | 'guided' | 'repeat'
   let repeatCount = 3;        // target repetitions for 'repeat' mode
   let repeatRemaining = 0;    // remaining repetitions in current set
-  let history = [];
   let autoSelected = false;
+
+  // Collection state
+  let practiceStats = {};   // char -> { learnCount, lastPracticedAt }
+  let collectionOrder = []; // ordered list of chars in collection (most recent first)
+  let collectionEditMode = false; // long-press delete mode
 
   // Learn mode state (20 repetitions across 4 phases)
   const LEARN_PHASES = [
     { guided: true,  outline: true  },
-    { guided: true,  outline: false },
     { guided: false, outline: true  },
+    { guided: true,  outline: false },
     { guided: false, outline: false },
   ];
   let learnActive = false;
@@ -80,8 +84,6 @@
   const charCounter    = $('#charCounter');
   const quizStatus     = $('#quizStatus');
   const quizProgress   = $('#quizProgress');
-  const historyBar     = $('#historyBar');
-  const historyChips   = $('#historyChips');
   const autoList       = $('#autocompleteList');
   const langBtns       = document.querySelectorAll('.lang-btn');
   const easterOverlay  = $('#easterOverlay');
@@ -106,6 +108,14 @@
   const learnDoneChar  = $('#learnDoneChar');
   const learnDoneInfo  = $('#learnDoneInfo');
   const learnCloseBtn  = $('#learnCloseBtn');
+  const collectBtn       = $('#collectBtn');
+  const collectionBar    = $('#collectionBar');
+  const collectionBtn    = $('#collectionBtn');
+  const collectionOverlay= $('#collectionOverlay');
+  const collectionBox    = $('#collectionBox');
+  const collectionCloseBtn = $('#collectionCloseBtn');
+  const collectionEmpty  = $('#collectionEmpty');
+  const collectionGrid   = $('#collectionGrid');
 
   // ---- Init ----
   function init() {
@@ -113,6 +123,8 @@
     loadLanguage();
     updateLangToggle();
     loadOutlinePreference();
+    loadCollectionData();
+    updateCollectionBar();
     bindEvents();
     if (location.hash && location.hash.length > 1) {
       const q = decodeURIComponent(location.hash.slice(1));
@@ -195,8 +207,8 @@
     setLoopBtn(isAnimLooping);
     // Update stroke count
     updateStrokeCount();
-    // Update history label
-    document.querySelector('.history-label').innerHTML = t('history.label');
+    // Update collection bar translation
+    updateCollectionBar();
     // Refresh autocomplete if visible
     if (!autoList.classList.contains('hidden')) {
       showAutocomplete();
@@ -365,6 +377,7 @@
   function showLearnDone(ch) {
     learnActive = false;
     track('learn_complete', { char: ch, lang: currentLang });
+    incrementLearnCount(ch);
     learnStatus.textContent = '';
     if (learnWriter) {
       learnWriter.cancelQuiz();
@@ -684,7 +697,6 @@
     renderInfoCard(fullInfo);
     loadAnimationWriters();
     setupPractice();
-    addToHistory(query);
     resetAnimationButtons();
     resetQuizState();
   }
@@ -735,6 +747,12 @@
     infoRadical.textContent = '';
     // Learn button is only for single characters
     learnBtn.classList.toggle('hidden', currentChars.length !== 1);
+    // Collection + button: single chars only
+    if (currentChars.length === 1) {
+      updateCollectBtnState(currentChars[0]);
+    } else {
+      collectBtn.classList.add('hidden');
+    }
     // First time a single char is searched, highlight the Learn button
     maybeShowLearnHint();
   }
@@ -916,6 +934,169 @@
   }
   function saveOutlinePreference() {
     localStorage.setItem('hanzi-outline', outlineVisible ? 'true' : 'false');
+  }
+
+  // ---- Collection persistence ----
+  const STATS_KEY = 'practice-stats';
+  const COLL_KEY = 'collection-order';
+
+  function loadCollectionData() {
+    try {
+      const raw = localStorage.getItem(STATS_KEY);
+      practiceStats = raw ? JSON.parse(raw) : {};
+    } catch (e) { practiceStats = {}; }
+    try {
+      const raw = localStorage.getItem(COLL_KEY);
+      collectionOrder = raw ? JSON.parse(raw) : [];
+    } catch (e) { collectionOrder = []; }
+  }
+
+  function saveCollectionData() {
+    try {
+      localStorage.setItem(STATS_KEY, JSON.stringify(practiceStats));
+      localStorage.setItem(COLL_KEY, JSON.stringify(collectionOrder));
+    } catch (e) { /* localStorage full or unavailable — silently ignore */ }
+  }
+
+  function getLearnCount(ch) { return (practiceStats[ch] && practiceStats[ch].learnCount) || 0; }
+
+  function incrementLearnCount(ch) {
+    if (!ch || ch.length !== 1) return;
+    if (!practiceStats[ch]) practiceStats[ch] = { learnCount: 0, lastPracticedAt: 0 };
+    practiceStats[ch].learnCount = (practiceStats[ch].learnCount || 0) + 1;
+    practiceStats[ch].lastPracticedAt = Date.now();
+    saveCollectionData();
+  }
+
+  function isInCollection(ch) { return collectionOrder.indexOf(ch) !== -1; }
+
+  function addToCollection(ch) {
+    if (!ch || ch.length !== 1) return;
+    if (isInCollection(ch)) return;
+    collectionOrder.unshift(ch); // most recent first
+    saveCollectionData();
+    updateCollectionBar();
+    updateCollectBtnState(ch);
+    track('collection_add', { char: ch });
+  }
+
+  function removeFromCollection(ch) {
+    const idx = collectionOrder.indexOf(ch);
+    if (idx === -1) return;
+    collectionOrder.splice(idx, 1);
+    saveCollectionData();
+    updateCollectionBar();
+    updateCollectBtnState(ch);
+    track('collection_remove', { char: ch });
+  }
+
+  function updateCollectionBar() {
+    const count = collectionOrder.length;
+    if (count > 0) {
+      collectionBar.classList.remove('hidden');
+      collectionBtn.textContent = t('collection.btn') + ' (' + count + ')';
+    } else {
+      collectionBar.classList.add('hidden');
+    }
+  }
+
+  function updateCollectBtnState(ch) {
+    if (!ch || ch.length !== 1) { collectBtn.classList.add('hidden'); return; }
+    collectBtn.classList.remove('hidden');
+    const plusIcon = collectBtn.querySelector('.collect-icon-plus');
+    const checkIcon = collectBtn.querySelector('.collect-icon-check');
+    if (isInCollection(ch)) {
+      collectBtn.classList.add('in-collection');
+      collectBtn.classList.remove('active');
+      if (plusIcon) plusIcon.classList.add('hidden');
+      if (checkIcon) checkIcon.classList.remove('hidden');
+      collectBtn.title = t('collection.add');
+    } else {
+      collectBtn.classList.remove('in-collection');
+      if (plusIcon) plusIcon.classList.remove('hidden');
+      if (checkIcon) checkIcon.classList.add('hidden');
+      collectBtn.title = t('collection.add');
+    }
+  }
+
+  function getCollectionColor(learnCount) {
+    if (learnCount >= 5) return '#2196f3';  // blue
+    if (learnCount === 4) return '#4caf50';  // green
+    if (learnCount === 3) return '#ffeb3b';  // yellow
+    if (learnCount === 2) return '#ff9800';  // orange
+    if (learnCount === 1) return '#ef5350';  // red
+    return '#9e9e9e';                         // gray
+  }
+
+  function renderCollectionGrid() {
+    collectionGrid.innerHTML = '';
+    if (collectionOrder.length === 0) {
+      collectionEmpty.classList.remove('hidden');
+      return;
+    }
+    collectionEmpty.classList.add('hidden');
+
+    collectionEditMode = false;
+
+    collectionOrder.forEach(function (ch) {
+      const cell = document.createElement('div');
+      cell.className = 'collection-cell';
+      cell.dataset.char = ch;
+
+      const charEl = document.createElement('span');
+      charEl.className = 'collection-cell-char';
+      charEl.textContent = ch;
+      cell.appendChild(charEl);
+
+      const indicator = document.createElement('div');
+      indicator.className = 'collection-cell-indicator';
+      const lc = getLearnCount(ch);
+      indicator.style.background = getCollectionColor(lc);
+      cell.appendChild(indicator);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'collection-cell-delete';
+      deleteBtn.textContent = '\u00d7';
+      deleteBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        removeFromCollection(ch);
+        renderCollectionGrid();
+      });
+      cell.appendChild(deleteBtn);
+
+      // Tap to navigate to practice
+      cell.addEventListener('click', function () {
+        if (cell.classList.contains('edit-mode')) return;
+        closeCollectionOverlay();
+        input.value = ch;
+        searchCharacter(ch);
+      });
+
+      // Long-press to toggle edit mode
+      let holdTimer = null;
+      cell.addEventListener('pointerdown', function () {
+        holdTimer = setTimeout(function () {
+          cell.classList.add('edit-mode');
+          collectionEditMode = true;
+        }, 500);
+      });
+      cell.addEventListener('pointerup', function () { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } });
+      cell.addEventListener('pointerleave', function () { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } });
+
+      collectionGrid.appendChild(cell);
+    });
+  }
+
+  function openCollectionOverlay() {
+    renderCollectionGrid();
+    // Apply translations inside the overlay
+    applyTranslations();
+    collectionOverlay.classList.remove('hidden');
+    track('collection_open', { count: collectionOrder.length });
+  }
+
+  function closeCollectionOverlay() {
+    collectionOverlay.classList.add('hidden');
   }
 
   // ---- Practice mode persistence ----
@@ -1227,31 +1408,6 @@
     if (updateChrome !== false) updatePracticeChrome();
   }
 
-  // ---- History ----
-  function addToHistory(query) {
-    history = history.filter((q) => q !== query);
-    history.unshift(query);
-    if (history.length > 10) history.pop();
-    renderHistory();
-  }
-
-  function renderHistory() {
-    if (history.length === 0) {
-      historyBar.classList.add('hidden');
-      return;
-    }
-    historyBar.classList.remove('hidden');
-    historyChips.innerHTML = history
-      .map((q) => `<button data-char="${q}">${q}</button>`)
-      .join('');
-    historyChips.querySelectorAll('button').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        input.value = btn.dataset.char;
-        searchCharacter(btn.dataset.char);
-      });
-    });
-  }
-
   // ---- Random ----
   function randomCharacter() {
     const keys = Object.keys(HANZI_DICT).filter((k) => k.length === 1);
@@ -1366,6 +1522,24 @@
     });
     // Listen for langchange event from i18n.js (in case it's triggered programmatically)
     document.addEventListener('langchange', onLangChange);
+
+    // Collection events
+    collectBtn.addEventListener('click', function () {
+      const ch = currentChars.length === 1 ? currentChars[0] : null;
+      if (!ch) return;
+      if (isInCollection(ch)) {
+        removeFromCollection(ch);
+      } else {
+        addToCollection(ch);
+      }
+      updateCollectBtnState(ch);
+    });
+
+    collectionBtn.addEventListener('click', openCollectionOverlay);
+    collectionCloseBtn.addEventListener('click', closeCollectionOverlay);
+    collectionOverlay.addEventListener('click', function (e) {
+      if (e.target === collectionOverlay) closeCollectionOverlay();
+    });
 
     window.addEventListener('resize', () => {
       if (resizeTimer) clearTimeout(resizeTimer);

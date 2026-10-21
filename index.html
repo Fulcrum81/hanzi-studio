@@ -108,6 +108,17 @@
           </div>
           <div class="learn-btn-wrap">
             <button id="learnBtn" class="learn-btn" data-i18n="learn.btn">Learn</button>
+            <button id="collectBtn" class="collect-btn" data-i18n-title="collection.add" title="Add to Collection">
+              <svg class="collect-icon collect-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                <path d="M9 10h6"/>
+                <path d="M12 7v6"/>
+              </svg>
+              <svg class="collect-icon collect-icon-check hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                <path d="M9 9.5 10.5 11l3-3"/>
+              </svg>
+            </button>
             <div class="learn-hint hidden" id="learnHint">
               <span class="learn-hint-arrow"></span>
               <span data-i18n="learn.hint">New! Learn — 20 guided repetitions for this character</span>
@@ -237,10 +248,9 @@
 
     </div>
 
-    <!-- History bar -->
-    <div class="history-bar hidden" id="historyBar">
-      <span class="history-label" data-i18n="history.label">Recent:</span>
-      <div class="history-chips" id="historyChips"></div>
+    <!-- Collection bar (replaces old History/Recent) -->
+    <div class="collection-bar hidden" id="collectionBar">
+      <button id="collectionBtn" class="collection-btn" data-i18n="collection.btn">My Collection</button>
     </div>
 
   </main>
@@ -314,6 +324,18 @@
     </div>
   </div>
 
+  <!-- Collection overlay -->
+  <div class="easter-overlay hidden" id="collectionOverlay">
+    <div class="collection-box" id="collectionBox">
+      <div class="collection-header">
+        <h2 class="collection-title" data-i18n="collection.title">My Collection</h2>
+        <button id="collectionCloseBtn" class="about-close-btn" aria-label="Close">&times;</button>
+      </div>
+      <div class="collection-empty hidden" id="collectionEmpty" data-i18n="collection.empty">Your collection is empty — tap + to add characters</div>
+      <div class="collection-grid" id="collectionGrid"></div>
+    </div>
+  </div>
+
   <!-- ===== Footer ===== -->
   <footer class="footer">
     <p data-i18n="footer.text">Powered by <a href="https://hanziwriter.org" target="_blank" rel="noopener">Hanzi Writer</a> · Data from <a href="https://github.com/skishore/makemeahanzi" target="_blank" rel="noopener">Make Me a Hanzi</a></p>
@@ -321,7 +343,7 @@
 
   <script src="app.js"></script>
   <script>
-    const APP_VERSION = 9;
+    const APP_VERSION = 10;
     // Register service worker for PWA offline support
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
